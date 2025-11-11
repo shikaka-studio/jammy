@@ -1,0 +1,23 @@
+# Build outputs
+dist/
+node_modules/
+
+# Dependencies
+.react-router/
+
+# Other
+.vscode/
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.md
+package-lock.json
+npm-debug.log*
+yarn.lock
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+pnpm-lock.yaml
+.env
+.env.local
