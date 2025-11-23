@@ -1,4 +1,4 @@
-import Container from '@/shared/Container';
+import Container from '@/ui/Container';
 
 const Footer = () => (
   <footer className='bg-black/20 py-20 md:py-40'>

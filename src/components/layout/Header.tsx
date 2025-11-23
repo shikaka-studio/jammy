@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import JammyLogo from '@/assets/jammy.svg';
+import JammyIcon from '@/icons/JammyIcon';
 import { HEADER_LINKS } from '@/constants/layout';
 import HeaderUser from './HeaderUser';
 
@@ -136,7 +136,7 @@ const Header = ({ isLanding = false }: HeaderProps) => {
         <div className='relative z-20 flex w-full justify-between md:px-0 lg:w-max'>
           <a href='/#home' aria-label='logo' className='flex items-center space-x-2'>
             <div className='h-8 w-8'>
-              <img src={JammyLogo} alt='Jammy logo' className='h-full w-full' />
+              <JammyIcon className='text-primary h-full w-full' />
             </div>
             <span className='text-2xl font-bold text-white'>Jammy</span>
           </a>

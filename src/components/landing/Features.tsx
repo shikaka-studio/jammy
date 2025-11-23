@@ -1,4 +1,4 @@
-import Container from '@/shared/Container';
+import Container from '@/ui/Container';
 import MusicImage from '@/assets/images/features/music.png';
 import LikeImage from '@/assets/images/features/like.png';
 import ChatImage from '@/assets/images/features/chat.png';

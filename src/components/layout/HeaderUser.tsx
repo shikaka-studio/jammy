@@ -1,5 +1,5 @@
 import { useAuthStore } from '@/stores/auth';
-import SpotifyIcon from '@/assets/spotify.svg';
+import SpotifyIcon from '@/icons/SpotifyIcon';
 
 const HeaderUser = () => {
   const { user } = useAuthStore();
@@ -19,7 +19,7 @@ const HeaderUser = () => {
       className='group bg-primary relative inline-flex w-fit cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full px-2.5 py-1.5 text-sm font-semibold text-gray-900'
       onClick={handleLogin}
     >
-      <img src={SpotifyIcon} alt='Spotify' className='h-5 w-5' />
+      <SpotifyIcon className='w-5' />
       Sign in to Spotify
       <div className='absolute inset-0 flex h-full w-full transform-[skew(-12deg)_translateX(-100%)] justify-center group-hover:transform-[skew(-12deg)_translateX(100%)] group-hover:duration-1000'>
         <div className='relative h-full w-8 bg-white/20'></div>

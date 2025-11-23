@@ -1,7 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 886 886" preserveAspectRatio="xMidYMid meet">
-    <g transform="translate(0,886) scale(0.1,-0.1)" fill="#1ed760" stroke="none">
-        <path
-            d="M4150 8843 c-623 -45 -1197 -205 -1745 -487 -934 -479 -1692 -1313
+interface JammyIconsProps {
+  className?: string;
+}
+
+const JammyIcon = ({ className }: JammyIconsProps) => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 886 886'
+    preserveAspectRatio='xMidYMid meet'
+    className={className}
+  >
+    <g transform='translate(0,886) scale(0.1,-0.1)' stroke='none'>
+      <path
+        fill='currentColor'
+        d='M4150 8843 c-623 -45 -1197 -205 -1745 -487 -934 -479 -1692 -1313
         -2083 -2291 -195 -488 -312 -1060 -312 -1536 0 -159 15 -215 74 -273 79 -80
         57 -77 706 -74 l575 3 81 27 c210 71 366 238 426 455 20 73 22 109 27 518 7
         489 4 473 74 515 65 40 149 18 201 -53 l21 -28 5 -1657 c5 -1285 9 -1667 18
@@ -34,7 +45,10 @@
         337 1343 398 200 24 655 24 860 -1 482 -58 861 -169 1285 -376 638 -311 1162
         -769 1549 -1355 265 -401 430 -782 552 -1274 56 -228 77 -269 163 -313 132
         -69 299 -6 345 130 24 69 20 107 -34 325 -145 583 -384 1102 -717 1559 -779
-        1068 -1961 1724 -3278 1818 -128 9 -478 11 -585 3z"
-        ></path>
+        1068 -1961 1724 -3278 1818 -128 9 -478 11 -585 3z'
+      ></path>
     </g>
-</svg>
+  </svg>
+);
+
+export default JammyIcon;
