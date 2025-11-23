@@ -16,11 +16,14 @@ const HeaderUser = () => {
     </button>
   ) : (
     <button
-      className='bg-primary flex w-fit cursor-pointer items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-gray-900 transition duration-300 hover:scale-105 active:scale-95 active:duration-75'
+      className='group bg-primary relative inline-flex w-fit cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full px-2.5 py-1.5 text-sm font-semibold text-gray-900'
       onClick={handleLogin}
     >
       <img src={SpotifyIcon} alt='Spotify' className='h-5 w-5' />
       Sign in to Spotify
+      <div className='absolute inset-0 flex h-full w-full transform-[skew(-12deg)_translateX(-100%)] justify-center group-hover:transform-[skew(-12deg)_translateX(100%)] group-hover:duration-1000'>
+        <div className='relative h-full w-8 bg-white/20'></div>
+      </div>
     </button>
   );
 };

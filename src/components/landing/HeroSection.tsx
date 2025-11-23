@@ -21,80 +21,34 @@ const HeroSection = () => (
               href='#'
               className='before:bg-primary relative flex h-11 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-full before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max'
             >
-              <span className='relative text-base font-semibold text-white'>Get started</span>
+              <span className='relative text-base font-semibold text-gray-900'>Get started</span>
             </a>
             <a
-              href='#'
-              className='before:bg-primary/10 relative flex h-11 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-full before:border before:border-gray-700 before:bg-gray-800 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max'
+              href='#features'
+              className='before:bg-primary/10 relative flex h-11 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-full before:border before:border-gray-700 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max'
             >
               <span className='relative text-base font-semibold text-white'>Learn more</span>
             </a>
           </div>
-          <div className='mt-16 hidden justify-between border-y border-gray-800 py-8 sm:flex'>
+          <div className='border-background-overlay mt-16 flex flex-col justify-between gap-8 border-y py-8 sm:flex-row'>
             <div className='text-left'>
-              <h6 className='text-lg font-semibold text-white'>The lowest price</h6>
-              <p className='mt-2 text-gray-500'>Some text here</p>
+              <h6 className='text-lg font-semibold text-white'>Connect Spotify</h6>
+              <p className='mt-2 text-gray-500'>
+                No account creation needed. Sign in with your Spotify account to get started.
+              </p>
             </div>
             <div className='text-left'>
-              <h6 className='text-lg font-semibold text-white'>The fastest on the market</h6>
-              <p className='mt-2 text-gray-500'>Some text here</p>
+              <h6 className='text-lg font-semibold text-white'>Create or Join Rooms</h6>
+              <p className='mt-2 text-gray-500'>
+                Start your own room or join a friend's. Share the link to invite others.
+              </p>
             </div>
             <div className='text-left'>
-              <h6 className='text-lg font-semibold text-white'>The most loved</h6>
-              <p className='mt-2 text-gray-500'>Some text here</p>
+              <h6 className='text-lg font-semibold text-white'>Vibe together</h6>
+              <p className='mt-2 text-gray-500'>
+                Add songs, vote on favorites, chat, and enjoy music with your crew.
+              </p>
             </div>
-          </div>
-        </div>
-        <div className='mt-12 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6'>
-          <div className='p-4 grayscale transition duration-200 hover:grayscale-0'>
-            <img
-              src='images/clients/microsoft.svg'
-              className='mx-auto h-12 w-auto'
-              loading='lazy'
-              alt='client logo'
-              width=''
-              height=''
-            />
-          </div>
-          <div className='p-4 grayscale transition duration-200 hover:grayscale-0'>
-            <img
-              src='images/clients/airbnb.svg'
-              className='mx-auto h-12 w-auto'
-              loading='lazy'
-              alt='client logo'
-              width=''
-              height=''
-            />
-          </div>
-          <div className='flex p-4 grayscale transition duration-200 hover:grayscale-0'>
-            <img
-              src='images/clients/google.svg'
-              className='m-auto h-9 w-auto'
-              loading='lazy'
-              alt='client logo'
-              width=''
-              height=''
-            />
-          </div>
-          <div className='flex p-4 grayscale transition duration-200 hover:grayscale-0'>
-            <img
-              src='images/clients/netflix.svg'
-              className='m-auto h-8 w-auto'
-              loading='lazy'
-              alt='client logo'
-              width=''
-              height=''
-            />
-          </div>
-          <div className='p-4 grayscale transition duration-200 hover:grayscale-0'>
-            <img
-              src='images/clients/google-cloud.svg'
-              className='mx-auto h-12 w-auto'
-              loading='lazy'
-              alt='client logo'
-              width=''
-              height=''
-            />
           </div>
         </div>
       </div>

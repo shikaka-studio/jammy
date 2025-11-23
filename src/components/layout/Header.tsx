@@ -42,7 +42,7 @@ const Header = ({ isLanding = false }: HeaderProps) => {
     'w-full',
     'transition-[background-color]',
     'ease-in-out',
-    isLanding && isScrolled ? 'backdrop-blur-md bg-gray-900/80' : 'bg-transparent',
+    isLanding && isScrolled ? 'backdrop-blur-md bg-background/80' : 'bg-transparent',
     !isLanding ? 'scroll' : '',
   ]
     .filter(Boolean)
@@ -80,7 +80,7 @@ const Header = ({ isLanding = false }: HeaderProps) => {
     'transition-all',
     'duration-300',
     'border-gray-700',
-    'bg-gray-800',
+    'bg-background-elevated-2',
     'shadow-none',
     'lg:visible',
     'lg:relative',
@@ -111,7 +111,7 @@ const Header = ({ isLanding = false }: HeaderProps) => {
     'backdrop-blur-2xl',
     'transition',
     'duration-500',
-    'bg-gray-900/70',
+    'bg-background/70',
     'lg:hidden',
     isToggled ? 'origin-top scale-y-100' : 'scale-y-0',
   ].join(' ');
@@ -169,7 +169,7 @@ const Header = ({ isLanding = false }: HeaderProps) => {
                 <li key={to}>
                   <a
                     href={to}
-                    className=':hover:text-white flex items-center gap-2 font-semibold transition md:px-4'
+                    className='flex items-center gap-2 font-semibold transition hover:text-white md:px-4'
                     onClick={handleLinkClick}
                   >
                     <span>{label}</span>

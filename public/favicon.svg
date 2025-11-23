@@ -1,6 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve">
 <style type="text/css">
-	.st1{fill:none;stroke:#101827;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st1 {
+		fill: none;
+		stroke: #101827;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-miterlimit: 10;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.st1 {
+			stroke: #ffffff;
+		}
+	}
 </style>
 <line class="st1" x1="4" y1="14" x2="4" y2="18"/>
 <line class="st1" x1="8" y1="12" x2="8" y2="20"/>

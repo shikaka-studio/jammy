@@ -1,4 +1,8 @@
 import Container from '@/shared/Container';
+import MusicImage from '@/assets/images/features/music.png';
+import LikeImage from '@/assets/images/features/like.png';
+import ChatImage from '@/assets/images/features/chat.png';
+import ClockImage from '@/assets/images/features/clock.png';
 
 const Features = () => (
   <div id='features' className='scroll-mt-20'>
@@ -8,7 +12,7 @@ const Features = () => (
           xmlns='http://www.w3.org/2000/svg'
           viewBox='0 0 24 24'
           fill='currentColor'
-          className='text-secondary h-6 w-6'
+          className='text-primary h-6 w-6'
         >
           <path
             fillRule='evenodd'
@@ -19,32 +23,26 @@ const Features = () => (
 
         <h2 className='my-8 text-2xl font-bold text-white md:text-4xl'>Features</h2>
         <p className='text-gray-300'>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus ad ipsum pariatur autem,
-          fugit laborum in atque amet obcaecati? Nisi minima aspernatur, quidem nulla cupiditate nam
-          consequatur eligendi magni adipisci.
+          Experience music together like never before. Create rooms, vote on songs, and listen in
+          perfect sync with friends. Whether you're discovering new tracks or sharing your
+          favorites, make every listening session a social experience.
         </p>
       </div>
-      <div className='mt-16 grid divide-x divide-y divide-gray-700 overflow-hidden rounded-3xl border border-gray-700 text-gray-600 sm:grid-cols-2 lg:grid-cols-4 lg:divide-y-0 xl:grid-cols-4'>
-        <div className='group relative bg-gray-800 transition hover:z-1 hover:shadow-2xl hover:shadow-gray-600/10'>
+      <div className='divide-background-light border-background-light mt-16 grid divide-x divide-y overflow-hidden rounded-3xl border text-gray-600 sm:grid-cols-2 lg:grid-cols-4 lg:divide-y-0 xl:grid-cols-4'>
+        <div className='group bg-background-elevated relative transition hover:z-1 hover:shadow-2xl hover:shadow-gray-600/10'>
           <div className='relative space-y-8 p-8 py-12'>
-            <img
-              src='https://cdn-icons-png.flaticon.com/512/4341/4341139.png'
-              className='w-12'
-              width='512'
-              height='512'
-              alt='burger illustration'
-            />
+            <img src={MusicImage} className='w-12' alt='Music records illustration' />
 
             <div className='space-y-2'>
-              <h5 className='group-hover:text-secondary text-xl font-semibold text-white transition'>
-                First feature
+              <h5 className='group-hover:text-primary text-xl font-semibold text-white transition'>
+                Create Rooms
               </h5>
               <p className='text-gray-300'>
-                Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.
+                Set up your own listening room and invite friends. Public or private, you decide.
               </p>
             </div>
-            <a href='#' className='group-hover:text-secondary flex items-center justify-between'>
-              <span className='text-sm'>Read more</span>
+            <a href='#' className='group-hover:text-primary flex items-center justify-between'>
+              <span className='text-sm'></span>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 24 24'
@@ -60,109 +58,46 @@ const Features = () => (
             </a>
           </div>
         </div>
-        <div className='group relative bg-gray-800 transition hover:z-1 hover:shadow-2xl hover:shadow-gray-600/10'>
+        <div className='group bg-background-elevated relative transition hover:z-1 hover:shadow-2xl hover:shadow-gray-600/10'>
           <div className='relative space-y-8 p-8 py-12'>
-            <img
-              src='https://cdn-icons-png.flaticon.com/512/4341/4341134.png'
-              className='w-12'
-              width='512'
-              height='512'
-              alt='burger illustration'
-            />
+            <img src={LikeImage} className='w-12' alt='Thumb up illustration' />
 
             <div className='space-y-2'>
-              <h5 className='group-hover:text-secondary text-xl font-semibold text-white transition'>
-                Second feature
+              <h5 className='group-hover:text-primary text-xl font-semibold text-white transition'>
+                Democratic Queue
               </h5>
               <p className='text-gray-300'>
-                Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.
+                Vote on songs to build the perfect playlist together. Most voted songs play first.
               </p>
             </div>
-            <a href='#' className='group-hover:text-secondary flex items-center justify-between'>
-              <span className='text-sm'>Read more</span>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                viewBox='0 0 24 24'
-                fill='currentColor'
-                className='h-5 w-5 -translate-x-4 text-2xl opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100'
-              >
-                <path
-                  fillRule='evenodd'
-                  d='M12.97 3.97a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 11-1.06-1.06l6.22-6.22H3a.75.75 0 010-1.5h16.19l-6.22-6.22a.75.75 0 010-1.06z'
-                  clipRule='evenodd'
-                ></path>
-              </svg>
-            </a>
           </div>
         </div>
-        <div className='group relative bg-gray-800 transition hover:z-1 hover:shadow-2xl hover:shadow-gray-600/10'>
+        <div className='group bg-background-elevated relative transition hover:z-1 hover:shadow-2xl hover:shadow-gray-600/10'>
           <div className='relative space-y-8 p-8 py-12'>
-            <img
-              src='https://cdn-icons-png.flaticon.com/512/4341/4341160.png'
-              className='w-12'
-              width='512'
-              height='512'
-              alt='burger illustration'
-            />
+            <img src={ChatImage} className='w-12' alt='Chat illustration' />
 
             <div className='space-y-2'>
-              <h5 className='group-hover:text-secondary text-xl font-semibold text-white transition'>
-                Third feature
+              <h5 className='group-hover:text-primary text-xl font-semibold text-white transition'>
+                Live Chat
               </h5>
               <p className='text-gray-300'>
-                Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.
+                Chat with everyone in the room about the music. React to songs in real-time.
               </p>
             </div>
-            <a href='#' className='group-hover:text-secondary flex items-center justify-between'>
-              <span className='text-sm'>Read more</span>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                viewBox='0 0 24 24'
-                fill='currentColor'
-                className='h-5 w-5 -translate-x-4 text-2xl opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100'
-              >
-                <path
-                  fillRule='evenodd'
-                  d='M12.97 3.97a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 11-1.06-1.06l6.22-6.22H3a.75.75 0 010-1.5h16.19l-6.22-6.22a.75.75 0 010-1.06z'
-                  clipRule='evenodd'
-                ></path>
-              </svg>
-            </a>
           </div>
         </div>
-        <div className='group relative bg-gray-900 transition hover:z-1 hover:shadow-2xl hover:shadow-gray-600/10'>
-          <div className='relative space-y-8 p-8 py-12 transition duration-300 group-hover:bg-gray-800'>
-            <img
-              src='https://cdn-icons-png.flaticon.com/512/4341/4341025.png'
-              className='w-12'
-              width='512'
-              height='512'
-              alt='burger illustration'
-            />
+        <div className='group bg-background-elevated/30 hover:bg-background-elevated-2 relative transition hover:z-1 hover:shadow-2xl hover:shadow-gray-600/10'>
+          <div className='relative space-y-8 p-8 py-12 transition duration-300'>
+            <img src={ClockImage} className='w-12' alt='Clock illustration' />
 
             <div className='space-y-2'>
-              <h5 className='group-hover:text-secondary text-xl font-semibold text-white transition'>
-                More features
+              <h5 className='group-hover:text-primary text-xl font-semibold text-white transition'>
+                Perfect Sync
               </h5>
               <p className='text-gray-300'>
-                Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.
+                Everyone hears the same thing at the same time. No lag, no delays.
               </p>
             </div>
-            <a href='#' className='group-hover:text-secondary flex items-center justify-between'>
-              <span className='text-sm'>Read more</span>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                viewBox='0 0 24 24'
-                fill='currentColor'
-                className='h-5 w-5 -translate-x-4 text-2xl opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100'
-              >
-                <path
-                  fillRule='evenodd'
-                  d='M12.97 3.97a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 11-1.06-1.06l6.22-6.22H3a.75.75 0 010-1.5h16.19l-6.22-6.22a.75.75 0 010-1.06z'
-                  clipRule='evenodd'
-                ></path>
-              </svg>
-            </a>
           </div>
         </div>
       </div>

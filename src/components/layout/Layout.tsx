@@ -6,7 +6,7 @@ interface LayoutProps {
 }
 
 const Layout = ({ isLanding, children }: LayoutProps) => (
-  <main className='bg-gray-900'>
+  <main className='bg-background'>
     <Header isLanding={isLanding} />
     <div className='relative'>{children}</div>
   </main>

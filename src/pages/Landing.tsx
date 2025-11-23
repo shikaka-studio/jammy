@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 
 const Landing = () => (
   <Layout isLanding>
-    <main className='space-y-40'>
+    <main className='space-y-24'>
       <HeroSection />
       <Features />
       <Footer />
