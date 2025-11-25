@@ -4,7 +4,7 @@ import { HEADER_LINKS } from '@/constants/layout';
 import HeaderUser from './HeaderUser';
 
 interface HeaderProps {
-  isLanding: boolean;
+  isLanding?: boolean;
 }
 
 const Header = ({ isLanding = false }: HeaderProps) => {

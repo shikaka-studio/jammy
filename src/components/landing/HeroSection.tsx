@@ -33,19 +33,19 @@ const HeroSection = () => (
           <div className='border-background-overlay mt-16 flex flex-col justify-between gap-8 border-y py-8 sm:flex-row'>
             <div className='text-left'>
               <h6 className='text-lg font-semibold text-white'>Connect Spotify</h6>
-              <p className='mt-2 text-gray-500'>
+              <p className='mt-2 text-gray-400'>
                 No account creation needed. Sign in with your Spotify account to get started.
               </p>
             </div>
             <div className='text-left'>
               <h6 className='text-lg font-semibold text-white'>Create or Join Rooms</h6>
-              <p className='mt-2 text-gray-500'>
+              <p className='mt-2 text-gray-400'>
                 Start your own room or join a friend's. Share the link to invite others.
               </p>
             </div>
             <div className='text-left'>
               <h6 className='text-lg font-semibold text-white'>Vibe together</h6>
-              <p className='mt-2 text-gray-500'>
+              <p className='mt-2 text-gray-400'>
                 Add songs, vote on favorites, chat, and enjoy music with your crew.
               </p>
             </div>

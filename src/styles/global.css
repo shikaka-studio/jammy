@@ -14,6 +14,7 @@
   --color-background-elevated-2: #2d243c;
   --color-background-overlay: #332947;
   --color-background-light: #5a496e;
+  --color-background-content: #0f0a1f;
 
   /* Surface colors for cards, panels, etc */
   --color-surface: #231a30;
@@ -75,6 +76,5 @@
 
   #header.scroll {
     @apply bg-gray-900/40 backdrop-blur-[20px] backdrop-saturate-150;
-    box-shadow: 0 0.375rem 1.5rem 0 rgb(140 152 164 / 13%);
   }
 }

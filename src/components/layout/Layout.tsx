@@ -1,7 +1,7 @@
 import Header from './Header';
 
 interface LayoutProps {
-  isLanding: boolean;
+  isLanding?: boolean;
   children: React.ReactNode;
 }
 
