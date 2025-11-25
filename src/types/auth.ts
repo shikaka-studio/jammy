@@ -12,3 +12,5 @@ export interface AuthCallbackResponse {
 export interface AuthMeResponse {
   user: User;
 }
+
+export type AuthCallbackStatus = 'loading' | 'error' | 'success';

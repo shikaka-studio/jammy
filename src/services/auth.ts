@@ -1,6 +1,6 @@
 import apiClient from './api';
 import { API_ENDPOINTS } from '@/constants/api';
-import type { AuthURLResponse, AuthCallbackResponse, AuthMeResponse } from '@/types/api';
+import type { AuthURLResponse, AuthCallbackResponse, AuthMeResponse } from '@/types/auth';
 
 export const authService = {
   async getAuthURL(): Promise<string> {

@@ -12,6 +12,8 @@
   --color-background: #191022;
   --color-background-elevated: #231a30;
   --color-background-elevated-2: #2d243c;
+  --color-background-elevated-3: #332947;
+  --color-background-elevated-4: #3b3152;
   --color-background-overlay: #332947;
   --color-background-light: #5a496e;
   --color-background-content: #0f0a1f;
@@ -40,15 +42,25 @@
   html {
     font-family: var(--font-family-sans);
     scroll-behavior: smooth;
+    height: 100%;
+    width: 100%;
   }
 
   body {
     font-family: var(--font-family-sans);
+    background-color: var(--color-background-content);
     color: var(--color-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
     margin: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  #root {
+    height: 100%;
+    width: 100%;
   }
 
   code {
@@ -64,6 +76,12 @@
   }
 }
 
+@layer components {
+  .card {
+    @apply bg-background-elevated border-border rounded-2xl border p-8 shadow-lg shadow-black/10;
+  }
+}
+
 @layer utilities {
   .hide-scrollbar {
     -ms-overflow-style: none;
@@ -76,5 +94,29 @@
 
   #header.scroll {
     @apply bg-gray-900/40 backdrop-blur-[20px] backdrop-saturate-150;
+  }
+
+  /* Custom scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-background-elevated-2);
+    border-radius: 6px;
+    border: 2px solid var(--color-background-content);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-background-overlay);
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: var(--color-background-elevated-3);
   }
 }

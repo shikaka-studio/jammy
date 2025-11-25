@@ -1,7 +1,7 @@
 import Container from '@/ui/Container';
 
 const AboutSection = () => (
-  <div className='relative pt-36' id='about'>
+  <div className='relative pt-24' id='about'>
     <Container>
       <div className='mx-auto lg:w-[80%]'>
         <div className='text-center'>

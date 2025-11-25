@@ -5,9 +5,9 @@ interface BaseLayoutProps {
 }
 
 const BaseLayout = ({ children }: BaseLayoutProps) => (
-  <main className='bg-background'>
+  <main className='h-screen w-screen bg-background flex flex-col'>
     <Header />
-    <div className='bg-background-content relative h-full w-full'>{children}</div>
+    <div className='bg-background-content relative flex-1 w-full overflow-auto'>{children}</div>
   </main>
 );
 
