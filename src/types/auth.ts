@@ -9,8 +9,4 @@ export interface AuthCallbackResponse {
   user: User;
 }
 
-export interface AuthMeResponse {
-  user: User;
-}
-
 export type AuthCallbackStatus = 'loading' | 'error' | 'success';

@@ -2,8 +2,15 @@ import { STORAGE_KEYS } from '@/constants/common';
 
 export const getToken = (): string | null => localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
 
+export const getSpotifyToken = (): string | null =>
+  localStorage.getItem(STORAGE_KEYS.SPOTIFY_TOKEN);
+
 export const setToken = (token: string): void => {
   localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+};
+
+export const setSpotifyToken = (token: string): void => {
+  localStorage.setItem(STORAGE_KEYS.SPOTIFY_TOKEN, token);
 };
 
 export const removeToken = (): void => {

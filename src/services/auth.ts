@@ -1,6 +1,7 @@
 import apiClient from './api';
 import { API_ENDPOINTS } from '@/constants/api';
-import type { AuthURLResponse, AuthCallbackResponse, AuthMeResponse } from '@/types/auth';
+import type { AuthURLResponse, AuthCallbackResponse } from '@/types/auth';
+import { User } from '@/types/user';
 
 export const authService = {
   async getAuthURL(): Promise<string> {
@@ -25,9 +26,9 @@ export const authService = {
     }
   },
 
-  async getCurrentUser(): Promise<AuthMeResponse> {
+  async getCurrentUser(): Promise<User> {
     try {
-      const response = await apiClient.get<AuthMeResponse>(API_ENDPOINTS.AUTH.ME);
+      const response = await apiClient.get<User>(API_ENDPOINTS.AUTH.ME);
       return response.data;
     } catch (error) {
       console.error('Failed to get current user:', error);

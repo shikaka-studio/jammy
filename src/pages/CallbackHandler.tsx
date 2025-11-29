@@ -8,32 +8,27 @@ import type { AuthCallbackStatus } from '@/types/auth';
 const CallbackHandler = () => {
   const [status, setStatus] = useState<AuthCallbackStatus>('loading');
   const [error, setError] = useState<string | null>(null);
-  const { setUser } = useAuthStore();
+  const { setUser, setToken } = useAuthStore();
 
   useEffect(() => {
     const handleCallback = async () => {
       try {
         // Extract code from URL query params
         const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-
-        // Check for Spotify error (user denied access)
-        const spotifyError = params.get('error');
-
-        if (spotifyError) {
-          throw new Error('Spotify authorization was denied.');
-        }
+        const token = params.get('token');
 
         // Validate code exists
-        if (!code) {
+        if (!token) {
           throw new Error('No authorization code received from Spotify.');
         }
 
+        setToken(token);
+
         // Exchange code for token
-        const response = await authService.handleCallback(code);
+        const response = await authService.getCurrentUser();
 
         // Store auth data in Zustand store (also persists to localStorage)
-        setUser(response.user, response.token);
+        setUser(response);
 
         // Show success state briefly before redirect
         setStatus('success');

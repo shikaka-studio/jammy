@@ -1,12 +1,10 @@
 export interface User {
   id: string;
-  name: string;
+  spotify_id: string;
+  display_name: string;
   email: string;
-  avatar?: string;
+  profile_image_url?: string;
   created_at: string;
-}
-
-export interface UserProfile extends User {
-  accessToken?: string;
-  tokenExpiresAt?: string;
+  access_token?: string;
+  product: string;
 }

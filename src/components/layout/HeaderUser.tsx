@@ -3,15 +3,15 @@ import SpotifyIcon from '@/icons/SpotifyIcon';
 
 const HeaderUser = () => {
   const { user } = useAuthStore();
-  const handleLogout = () => { };
+  const handleLogout = () => {};
 
   return user ? (
     <button
       className='flex items-center gap-3 rounded-full bg-white/10 px-3 py-2'
       onClick={handleLogout}
     >
-      <img className='h-5 w-5 rounded-full' src={user.avatar} alt='Rounded avatar' />
-      <span className='text-xs font-semibold text-white'>{user.name}</span>
+      <img className='h-5 w-5 rounded-full' src={user.profile_image_url} alt='Rounded avatar' />
+      <span className='text-xs font-semibold text-white'>{user.display_name}</span>
     </button>
   ) : (
     <a
