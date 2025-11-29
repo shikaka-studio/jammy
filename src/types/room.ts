@@ -60,5 +60,13 @@ export interface RoomSession {
   songs: HistorySong[];
 }
 
-export type QueueTabType = 'queue' | 'recent';
+export type QueueTabType = 'queue' | 'recent' | 'chat';
+
+export interface ChatMessage {
+  id: string;
+  userId: string;
+  userName: string;
+  message: string;
+  timestamp: Date;
+}
 

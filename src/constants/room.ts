@@ -12,6 +12,13 @@ export const ROOM_TEXTS = {
 export const QUEUE_TABS = {
   QUEUE: 'En cola',
   RECENT: 'Recientes',
+  CHAT: 'Chat',
+} as const;
+
+export const CHAT_TEXTS = {
+  PLACEHOLDER: 'Escribe un mensaje...',
+  EMPTY_MESSAGE: 'No hay mensajes aún. ¡Sé el primero en escribir!',
+  SEND_BUTTON: 'Enviar',
 } as const;
 
 export const HISTORY_MODAL = {

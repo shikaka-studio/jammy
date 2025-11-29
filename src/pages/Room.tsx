@@ -3,7 +3,7 @@ import Layout from '@/components/layout/Layout';
 import SongSearch from '@/components/room/SongSearch';
 import SongPlayer from '@/components/room/SongPlayer';
 import SongQueueTabs from '@/components/room/SongQueueTabs';
-import type { Song, QueueSong, SearchResult, PlayerState, HistorySong, RoomSession } from '@/types/room';
+import type { Song, QueueSong, SearchResult, PlayerState, HistorySong, RoomSession, ChatMessage } from '@/types/room';
 
 // Mock data for development
 const MOCK_CURRENT_SONG: Song = {
@@ -152,6 +152,30 @@ const MOCK_SESSIONS: RoomSession[] = [
   },
 ];
 
+const MOCK_CHAT_MESSAGES: ChatMessage[] = [
+  {
+    id: 'msg-1',
+    userId: 'user1',
+    userName: 'Carlos',
+    message: '¡Qué buena canción! 🎵',
+    timestamp: new Date(Date.now() - 1000 * 60 * 10),
+  },
+  {
+    id: 'msg-2',
+    userId: 'user2',
+    userName: 'María',
+    message: 'Alguien puede poner algo de rock?',
+    timestamp: new Date(Date.now() - 1000 * 60 * 8),
+  },
+  {
+    id: 'msg-3',
+    userId: 'user3',
+    userName: 'Pablo',
+    message: 'Yo añado una ahora mismo',
+    timestamp: new Date(Date.now() - 1000 * 60 * 5),
+  },
+];
+
 const Room = () => {
   const [playerState, setPlayerState] = useState<PlayerState>({
     currentTime: 140,
@@ -161,6 +185,7 @@ const Room = () => {
 
   const [queue, setQueue] = useState<QueueSong[]>(MOCK_QUEUE);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(MOCK_CHAT_MESSAGES);
 
   const handleTogglePlay = () => {
     setPlayerState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
@@ -194,6 +219,17 @@ const Room = () => {
     setQueue((prev) => [...prev, newQueueSong]);
   };
 
+  const handleSendMessage = (message: string) => {
+    const newMessage: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      userId: 'currentUser',
+      userName: 'Tú',
+      message,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, newMessage]);
+  };
+
   return (
     <Layout>
       <div className="flex h-[calc(100vh-56.5px)] flex-col py-4">
@@ -224,6 +260,8 @@ const Room = () => {
               queue={queue}
               recentSongs={MOCK_RECENT_SONGS}
               sessions={MOCK_SESSIONS}
+              messages={messages}
+              onSendMessage={handleSendMessage}
             />
           </div>
         </div>

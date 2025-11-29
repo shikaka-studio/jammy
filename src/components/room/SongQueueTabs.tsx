@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import type { QueueSong, HistorySong, RoomSession, QueueTabType } from '@/types/room';
+import type { QueueSong, HistorySong, RoomSession, QueueTabType, ChatMessage } from '@/types/room';
 import { QUEUE_TABS } from '@/constants/room';
 import QueueItem from './QueueItem';
 import SessionHistoryModal from './SessionHistoryModal';
+import RoomChat from './RoomChat';
 
 const MIN_WIDTH = 320;
 const MAX_WIDTH = 640;
@@ -11,6 +12,8 @@ interface SongQueueTabsProps {
   queue: QueueSong[];
   recentSongs: HistorySong[];
   sessions: RoomSession[];
+  messages: ChatMessage[];
+  onSendMessage: (message: string) => void;
 }
 
 const HistoryIcon = () => (
@@ -29,7 +32,7 @@ const HistoryIcon = () => (
   </svg>
 );
 
-const SongQueueTabs = ({ queue, recentSongs, sessions }: SongQueueTabsProps) => {
+const SongQueueTabs = ({ queue, recentSongs, sessions, messages, onSendMessage }: SongQueueTabsProps) => {
   const [activeTab, setActiveTab] = useState<QueueTabType>('queue');
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [width, setWidth] = useState(MIN_WIDTH);
@@ -75,6 +78,7 @@ const SongQueueTabs = ({ queue, recentSongs, sessions }: SongQueueTabsProps) => 
   const tabs: { key: QueueTabType; label: string }[] = [
     { key: 'queue', label: QUEUE_TABS.QUEUE },
     { key: 'recent', label: QUEUE_TABS.RECENT },
+    { key: 'chat', label: QUEUE_TABS.CHAT },
   ];
 
   const renderContent = () => {
@@ -87,6 +91,10 @@ const SongQueueTabs = ({ queue, recentSongs, sessions }: SongQueueTabsProps) => 
         );
       }
       return queue.map((song) => <QueueItem key={song.id} song={song} />);
+    }
+
+    if (activeTab === 'chat') {
+      return <RoomChat messages={messages} onSendMessage={onSendMessage} />;
     }
 
     if (recentSongs.length === 0) {
