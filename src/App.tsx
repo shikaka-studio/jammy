@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router';
 import Landing from '@/pages/Landing';
 import About from '@/pages/About';
+import Room from '@/pages/Room';
 import CallbackHandler from '@/pages/CallbackHandler';
 import { ROUTES } from '@/constants/routes';
 
@@ -13,6 +14,7 @@ export default function App() {
       <Route path={ROUTES.CALLBACK} element={<CallbackHandler />} />
 
       {/* Protected routes */}
+      <Route path={ROUTES.ROOMS + '/:id'} element={<Room />} />
     </Routes>
   );
 }

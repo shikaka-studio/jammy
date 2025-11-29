@@ -6,9 +6,9 @@ interface LayoutProps {
 }
 
 const Layout = ({ isLanding, children }: LayoutProps) => (
-  <main className='bg-background'>
+  <main className='flex min-h-screen flex-col bg-background'>
     <Header isLanding={isLanding} />
-    <div className='relative'>{children}</div>
+    <div className='relative flex-1'>{children}</div>
   </main>
 );
 
