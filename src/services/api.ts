@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig } from 'axios';
-import { getToken, removeToken, getSpotifyToken } from '@/utils/auth';
+import { getToken, removeToken } from '@/utils/auth';
 import { API_URL } from '@/constants/api';
 
 const apiClient: AxiosInstance = axios.create({
@@ -14,9 +14,6 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getToken();
-    const spotifyToken = getSpotifyToken();
-
-    console.log(config);
 
     // Add Authorization header if token exists
     // Skip for login/callback endpoints as they don't need auth
