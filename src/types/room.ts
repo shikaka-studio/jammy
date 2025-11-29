@@ -22,17 +22,24 @@ export interface PlayerState {
   volume: number;
 }
 
+export interface RoomMember {
+  spotify_id: string;
+  display_name: string;
+  profile_image_url?: string;
+}
+
 export interface Room {
-  id: string;
+  room_code: string;
   name: string;
-  coverImage: string;
-  currentSong: {
+  host: RoomMember;
+  members: RoomMember[];
+  created_at: string;
+  coverImage?: string;
+  currentSong?: {
     artist: string;
     title: string;
   };
-  usersCount: number;
-  tags: string[];
-  createdAt: Date;
+  tags?: string[];
 }
 
 export type RoomFilterType = 'all' | 'popular' | 'recent' | 'tag';
@@ -47,6 +54,24 @@ export interface CreateRoomFormData {
   tags: string[];
   description: string;
   coverImage: File | null;
+}
+
+export interface CreateRoomRequest {
+  name: string;
+  host_spotify_id: string;
+}
+
+export interface JoinRoomRequest {
+  room_code: string;
+  user_spotify_id: string;
+}
+
+export interface LeaveRoomParams {
+  user_spotify_id: string;
+}
+
+export interface CloseRoomParams {
+  host_spotify_id: string;
 }
 
 export interface HistorySong extends Song {

@@ -10,4 +10,12 @@ export const API_ENDPOINTS = {
     ME: '/auth/me',
     LOGOUT: '/auth/logout',
   },
+  ROOMS: {
+    LIST: '/rooms',
+    CREATE: '/rooms/create',
+    JOIN: '/rooms/join',
+    DETAILS: (roomCode: string) => `/rooms/${roomCode}`,
+    LEAVE: (roomCode: string) => `/rooms/${roomCode}/leave`,
+    CLOSE: (roomCode: string) => `/rooms/${roomCode}`,
+  },
 } as const;

@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router';
 import Layout from '@/components/layout/Layout';
 import SongSearch from '@/components/room/SongSearch';
 import SongPlayer from '@/components/room/SongPlayer';
 import SongQueueTabs from '@/components/room/SongQueueTabs';
-import type { Song, QueueSong, SearchResult, PlayerState, HistorySong, RoomSession, ChatMessage } from '@/types/room';
+import type { Song, QueueSong, SearchResult, PlayerState, HistorySong, RoomSession, ChatMessage, Room as RoomType } from '@/types/room';
+import { roomsService } from '@/services/rooms';
+import { spotifyService } from '@/services/spotify';
+import { useAuthStore } from '@/stores/auth';
+import { ROUTES } from '@/constants/routes';
 
 // Mock data for development
 const MOCK_CURRENT_SONG: Song = {
@@ -34,25 +39,6 @@ const MOCK_QUEUE: QueueSong[] = [
     likes: 8,
     dislikes: 1,
     addedBy: 'user2',
-  },
-];
-
-const MOCK_SEARCH_RESULTS: SearchResult[] = [
-  {
-    id: '4',
-    name: 'Flowers',
-    artist: 'Miley Cyrus',
-    albumCover: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=300&h=300&fit=crop',
-    duration: 200,
-    album: 'Endless Summer Vacation',
-  },
-  {
-    id: '5',
-    name: 'Anti-Hero',
-    artist: 'Taylor Swift',
-    albumCover: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&h=300&fit=crop',
-    duration: 200,
-    album: 'Midnights',
   },
 ];
 
@@ -177,6 +163,15 @@ const MOCK_CHAT_MESSAGES: ChatMessage[] = [
 ];
 
 const Room = () => {
+  const { id: roomCode } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
+
+  const [room, setRoom] = useState<RoomType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isJoining, setIsJoining] = useState(false);
+
   const [playerState, setPlayerState] = useState<PlayerState>({
     currentTime: 140,
     isPlaying: true,
@@ -185,7 +180,104 @@ const Room = () => {
 
   const [queue, setQueue] = useState<QueueSong[]>(MOCK_QUEUE);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(MOCK_CHAT_MESSAGES);
+
+  useEffect(() => {
+    const loadRoomDetails = async () => {
+      if (!roomCode || !user) return;
+
+      try {
+        setIsLoading(true);
+        setError(null);
+        const roomData = await roomsService.getRoomDetails(roomCode);
+        setRoom(roomData);
+
+        // Verificar si el usuario ya es miembro
+        const isMember = roomData.members.some(
+          (member) => member.spotify_id === user?.spotify_id
+        );
+
+        // Si no es miembro, unirse automáticamente
+        if (!isMember && user?.spotify_id) {
+          try {
+            setIsJoining(true);
+            const updatedRoom = await roomsService.joinRoom(roomCode, user.spotify_id);
+            setRoom(updatedRoom);
+          } catch (joinErr) {
+            setError(joinErr instanceof Error ? joinErr.message : 'Error al unirse a la sala');
+            console.error('Error joining room:', joinErr);
+          } finally {
+            setIsJoining(false);
+          }
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al cargar la sala');
+        console.error('Error loading room:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (!user) {
+      setError('Debes iniciar sesión para acceder a una sala');
+      setIsLoading(false);
+      return;
+    }
+
+    if (roomCode) {
+      loadRoomDetails();
+    }
+  }, [roomCode, user]);
+
+  const handleLeaveRoom = async () => {
+    if (!user?.spotify_id) {
+      setError('Debes iniciar sesión para salir de la sala');
+      return;
+    }
+
+    if (!roomCode) return;
+
+    const confirmLeave = window.confirm('¿Estás seguro de que quieres salir de esta sala?');
+    if (!confirmLeave) return;
+
+    try {
+      await roomsService.leaveRoom(roomCode, user.spotify_id);
+      navigate(ROUTES.ROOMS);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al salir de la sala');
+      console.error('Error leaving room:', err);
+    }
+  };
+
+  const handleCloseRoom = async () => {
+    if (!user?.spotify_id) {
+      setError('Debes iniciar sesión para cerrar la sala');
+      return;
+    }
+
+    if (!roomCode || !room) return;
+
+    if (room.host.spotify_id !== user.spotify_id) {
+      setError('Solo el host puede cerrar la sala');
+      return;
+    }
+
+    const confirmClose = window.confirm(
+      '¿Estás seguro de que quieres cerrar esta sala? Todos los miembros serán desconectados.'
+    );
+    if (!confirmClose) return;
+
+    try {
+      await roomsService.closeRoom(roomCode, user.spotify_id);
+      navigate(ROUTES.ROOMS);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al cerrar la sala');
+      console.error('Error closing room:', err);
+    }
+  };
+
+  const isHost = room?.host.spotify_id === user?.spotify_id;
 
   const handleTogglePlay = () => {
     setPlayerState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
@@ -195,18 +287,24 @@ const Room = () => {
     setPlayerState((prev) => ({ ...prev, currentTime: time }));
   };
 
-  const handleSearch = (query: string) => {
+  const handleSearch = async (query: string) => {
     if (query.length === 0) {
       setSearchResults([]);
       return;
     }
-    // Simulate search by filtering mock results
-    const filtered = MOCK_SEARCH_RESULTS.filter(
-      (song) =>
-        song.name.toLowerCase().includes(query.toLowerCase()) ||
-        song.artist.toLowerCase().includes(query.toLowerCase())
-    );
-    setSearchResults(filtered.length > 0 ? filtered : MOCK_SEARCH_RESULTS);
+
+    try {
+      setIsSearching(true);
+      setError(null);
+      const results = await spotifyService.searchTracks(query);
+      setSearchResults(results);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al buscar canciones');
+      console.error('Error searching songs:', err);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const handleAddSong = (song: SearchResult) => {
@@ -230,17 +328,88 @@ const Room = () => {
     setMessages((prev) => [...prev, newMessage]);
   };
 
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex h-[calc(100vh-56.5px)] items-center justify-center">
+          <div className="text-text-secondary">Cargando sala...</div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error && !room) {
+    return (
+      <Layout>
+        <div className="flex h-[calc(100vh-56.5px)] flex-col items-center justify-center gap-4">
+          <div className="text-red-500">{error}</div>
+          <button
+            onClick={() => navigate(ROUTES.ROOMS)}
+            className="rounded-xl bg-primary px-6 py-2 text-gray-900 hover:bg-primary/90 transition"
+          >
+            Volver a salas
+          </button>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (isJoining) {
+    return (
+      <Layout>
+        <div className="flex h-[calc(100vh-56.5px)] items-center justify-center">
+          <div className="text-text-secondary">Uniéndose a la sala...</div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="flex h-[calc(100vh-56.5px)] flex-col py-4">
+        {/* Room header with controls */}
+        <div className="px-6 md:px-12 xl:px-6 pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-text-primary">{room?.name}</h1>
+              <p className="text-sm text-text-secondary">
+                {room?.members.length} {room?.members.length === 1 ? 'miembro' : 'miembros'}
+                {isHost && <span className="ml-2 text-primary">(Host)</span>}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleLeaveRoom}
+                className="rounded-xl border border-border bg-transparent px-4 py-2 text-sm font-medium text-text-primary transition hover:bg-surface-hover"
+              >
+                Salir
+              </button>
+              {isHost && (
+                <button
+                  onClick={handleCloseRoom}
+                  className="rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600"
+                >
+                  Cerrar sala
+                </button>
+              )}
+            </div>
+          </div>
+          {error && (
+            <div className="mt-4 rounded-xl bg-red-500/10 border border-red-500/20 p-3 text-red-500 text-sm">
+              {error}
+            </div>
+          )}
+        </div>
+
         <div className="flex h-full w-full flex-col gap-4 px-6 md:px-12 xl:px-6 lg:flex-row">
           {/* Left column: Search and Player */}
-          <div className="flex flex-1 flex-col gap-4 lg:flex-[3]">
+          <div className="flex flex-1 flex-col gap-4" style={{ flex: '3' }}>
             {/* Search bar at top */}
             <SongSearch
               searchResults={searchResults}
               onSearch={handleSearch}
               onAddSong={handleAddSong}
+              isSearching={isSearching}
             />
 
             {/* Player at bottom */}

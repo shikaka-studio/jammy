@@ -31,14 +31,17 @@ const RoomCard = ({ room }: RoomCardProps) => {
         target.src = `https://via.placeholder.com/400/231a30/ffffff?text=${encodeURIComponent(room.name.substring(0, 2))}`;
     };
 
+    const usersCount = room.members.length;
+    const defaultCoverImage = `https://via.placeholder.com/400/231a30/ffffff?text=${encodeURIComponent(room.name.substring(0, 2))}`;
+
     return (
         <Link
-            to={ROUTES.ROOM(room.id)}
+            to={ROUTES.ROOM(room.room_code)}
             className="group block rounded-2xl bg-background-elevated p-4 transition hover:bg-surface-hover"
         >
             <div className="aspect-square overflow-hidden rounded-xl">
                 <img
-                    src={room.coverImage}
+                    src={room.coverImage || defaultCoverImage}
                     alt={room.name}
                     className="h-full w-full object-cover transition group-hover:scale-105"
                     onError={handleImageError}
@@ -48,13 +51,19 @@ const RoomCard = ({ room }: RoomCardProps) => {
                 <h3 className="truncate text-base font-semibold text-text-primary">
                     {room.name}
                 </h3>
-                <p className="truncate text-sm text-text-secondary">
-                    {room.currentSong.artist} - {room.currentSong.title}
-                </p>
+                {room.currentSong ? (
+                    <p className="truncate text-sm text-text-secondary">
+                        {room.currentSong.artist} - {room.currentSong.title}
+                    </p>
+                ) : (
+                    <p className="truncate text-sm text-text-secondary">
+                        Sin música activa
+                    </p>
+                )}
                 <div className="flex items-center gap-1.5 pt-1 text-text-secondary">
                     <UsersIcon />
                     <span className="text-sm">
-                        {room.usersCount} {ROOMS_PAGE_TEXTS.USERS_LABEL}
+                        {usersCount} {ROOMS_PAGE_TEXTS.USERS_LABEL}
                     </span>
                 </div>
             </div>
