@@ -204,8 +204,8 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
     e.preventDefault();
     if (!formData.name.trim()) return;
 
-    // Solo enviamos el nombre, el backend solo necesita name y host_spotify_id
-    // Los demás campos (tags, description, coverImage) se pueden usar en el futuro
+    // Only send name, backend only needs name and host_spotify_id
+    // Other fields (tags, description, coverImage) can be used in the future
     onSubmit(formData);
     handleClose();
   };

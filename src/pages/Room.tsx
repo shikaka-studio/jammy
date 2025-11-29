@@ -193,12 +193,12 @@ const Room = () => {
         const roomData = await roomsService.getRoomDetails(roomCode);
         setRoom(roomData);
 
-        // Verificar si el usuario ya es miembro
+        // Check if user is already a member
         const isMember = roomData.members?.some(
           (member) => member.users?.spotify_id === user?.spotify_id
         );
 
-        // Si no es miembro, unirse automáticamente
+        // If not a member, join automatically
         if (!isMember && user?.spotify_id) {
           try {
             setIsJoining(true);
@@ -258,7 +258,7 @@ const Room = () => {
 
     if (!roomCode || !room) return;
 
-    // Verificar si el usuario es el host comparando con host_id o host.spotify_id
+    // Check if user is the host by comparing with host_id or host.spotify_id
     const userIsHost = checkIsHost(room, user.id);
 
     if (!userIsHost) {
@@ -280,14 +280,14 @@ const Room = () => {
     }
   };
 
-  // Verificar si el usuario actual es el host de la sala
+  // Check if current user is the room host
   const checkIsHost = (roomData: RoomType | null, userId?: string): boolean => {
     if (!roomData || !userId) return false;
 
-    // Primero intentar con host_id (UUID del usuario)
+    // First try with host_id (user UUID)
     if (roomData.room.host_id === userId) return true;
 
-    // Si hay objeto host, comparar con spotify_id
+    // If host object exists, compare with spotify_id
     if (roomData.room.host?.spotify_id === user?.spotify_id) return true;
 
     return false;

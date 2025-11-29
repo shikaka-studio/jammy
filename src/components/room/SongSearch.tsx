@@ -30,7 +30,7 @@ const SongSearch = ({ searchResults, onSearch, onAddSong, isSearching = false }:
   }, []);
 
   useEffect(() => {
-    // Limpiar el timer cuando el componente se desmonte
+    // Clear timer when component unmounts
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
@@ -43,18 +43,18 @@ const SongSearch = ({ searchResults, onSearch, onAddSong, isSearching = false }:
     setQuery(value);
     setIsOpen(value.length > 0);
 
-    // Limpiar el timer anterior
+    // Clear previous timer
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
 
-    // Si la query está vacía, limpiar resultados inmediatamente
+    // If query is empty, clear results immediately
     if (value.trim().length === 0) {
       onSearch('');
       return;
     }
 
-    // Crear nuevo timer para debounce
+    // Create new timer for debounce
     debounceTimerRef.current = setTimeout(() => {
       onSearch(value);
     }, DEBOUNCE_DELAY);
