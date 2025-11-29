@@ -147,8 +147,8 @@ const SongQueueTabs = ({ queue, recentSongs, sessions, messages, onSendMessage }
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${activeTab === tab.key
-                    ? 'bg-primary text-background shadow-sm'
-                    : 'text-text-secondary hover:text-text-primary'
+                  ? 'bg-primary text-background shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
                   }`}
               >
                 {tab.label}
