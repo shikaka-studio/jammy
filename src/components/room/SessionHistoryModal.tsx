@@ -138,8 +138,8 @@ const SessionHistoryModal = ({
   };
 
   const handleExportToSpotify = (session: RoomSession) => {
-    // TODO: Implementar exportación a Spotify
-    console.log('Exportando sesión a Spotify:', session);
+    // TODO: Implement Spotify export
+    console.log('Exporting session to Spotify:', session);
   };
 
   return (

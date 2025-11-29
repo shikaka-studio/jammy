@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import type { QueueSong, HistorySong, RoomSession, QueueTabType } from '@/types/room';
 import { QUEUE_TABS } from '@/constants/room';
 import QueueItem from './QueueItem';
 import SessionHistoryModal from './SessionHistoryModal';
+
+const MIN_WIDTH = 320;
+const MAX_WIDTH = 640;
 
 interface SongQueueTabsProps {
   queue: QueueSong[];
@@ -29,6 +32,45 @@ const HistoryIcon = () => (
 const SongQueueTabs = ({ queue, recentSongs, sessions }: SongQueueTabsProps) => {
   const [activeTab, setActiveTab] = useState<QueueTabType>('queue');
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [width, setWidth] = useState(MIN_WIDTH);
+  const [isResizing, setIsResizing] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const newWidth = containerRect.right - e.clientX;
+
+      setWidth(Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, newWidth)));
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    // Change body cursor while resizing
+    document.body.style.cursor = 'ew-resize';
+    document.body.style.userSelect = 'none';
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
 
   const tabs: { key: QueueTabType; label: string }[] = [
     { key: 'queue', label: QUEUE_TABS.QUEUE },
@@ -77,19 +119,29 @@ const SongQueueTabs = ({ queue, recentSongs, sessions }: SongQueueTabsProps) => 
 
   return (
     <>
-      <div className="flex h-full min-w-80 flex-col rounded-2xl bg-background-elevated p-4">
-        {/* Header con tabs e icono de historial */}
+      <div
+        ref={containerRef}
+        className="relative flex h-full flex-col rounded-2xl bg-background-elevated p-4"
+        style={{ width: `${width}px`, minWidth: `${MIN_WIDTH}px`, maxWidth: `${MAX_WIDTH}px` }}
+      >
+        {/* Resize handle */}
+        <div
+          onMouseDown={handleMouseDown}
+          className={`absolute left-0 top-0 h-full w-1 cursor-ew-resize rounded-l-2xl transition-colors hover:bg-primary/50 ${isResizing ? 'bg-primary' : 'bg-transparent'
+            }`}
+        />
+
+        {/* Header with tabs and history icon */}
         <div className="mb-3 flex items-center justify-between">
           <div className="flex gap-1 rounded-lg bg-background-elevated-2 p-1">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
-                  activeTab === tab.key
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${activeTab === tab.key
                     ? 'bg-primary text-background shadow-sm'
                     : 'text-text-secondary hover:text-text-primary'
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>
@@ -99,13 +151,13 @@ const SongQueueTabs = ({ queue, recentSongs, sessions }: SongQueueTabsProps) => 
           <button
             onClick={() => setIsHistoryOpen(true)}
             className="rounded-lg p-2 text-text-secondary transition hover:bg-surface-hover hover:text-primary"
-            title="Ver historial de sesiones"
+            title="View session history"
           >
             <HistoryIcon />
           </button>
         </div>
 
-        {/* Contenido */}
+        {/* Content */}
         <div className="hide-scrollbar flex-1 space-y-2 overflow-y-auto">
           {renderContent()}
         </div>
