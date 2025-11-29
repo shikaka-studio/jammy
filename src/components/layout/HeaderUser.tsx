@@ -1,5 +1,6 @@
 import { useAuthStore } from '@/stores/auth';
 import SpotifyIcon from '@/icons/SpotifyIcon';
+import { API_URL } from '@/constants/api';
 
 const HeaderUser = () => {
   const { user } = useAuthStore();
@@ -15,7 +16,7 @@ const HeaderUser = () => {
     </button>
   ) : (
     <a
-      href='http://localhost:8000/auth/login'
+      href={`${API_URL}/auth/login`}
       className='group bg-primary relative inline-flex w-fit cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full px-2.5 py-1.5 text-sm font-semibold text-gray-900'
     >
       <SpotifyIcon className='w-5' />
