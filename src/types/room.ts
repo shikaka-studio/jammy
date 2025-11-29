@@ -50,7 +50,7 @@ export interface RoomHost {
   profile_image_url?: string;
 }
 
-export interface RoomData {
+export interface Room {
   id: string;
   name: string;
   room_code: string;
@@ -64,15 +64,7 @@ export interface RoomData {
   tags?: string[] | null;
   cover_image?: string | null;
   host?: RoomHost | null;
-}
-
-export interface Room {
-  room: RoomData;
-  members: RoomMember[];
-}
-
-export interface RoomsResponse {
-  rooms: Room[];
+  members?: RoomMember[];
 }
 
 export type RoomFilterType = 'all' | 'popular' | 'recent' | 'tag';
@@ -127,4 +119,3 @@ export interface ChatMessage {
   message: string;
   timestamp: Date;
 }
-
