@@ -1,19 +1,18 @@
 import apiClient from './api';
 import { API_ENDPOINTS } from '@/constants/api';
-import type { 
+import type {
   Room,
-  RoomsResponse,
-  CreateRoomRequest, 
+  CreateRoomRequest,
   JoinRoomRequest,
   LeaveRoomParams,
-  CloseRoomParams 
+  CloseRoomParams,
 } from '@/types/room';
 
 export const roomsService = {
   async getRooms(): Promise<Room[]> {
     try {
-      const response = await apiClient.get<RoomsResponse>(API_ENDPOINTS.ROOMS.LIST);
-      return response.data.rooms;
+      const response = await apiClient.get<Room[]>(API_ENDPOINTS.ROOMS.LIST);
+      return response.data;
     } catch (error) {
       console.error('Failed to get rooms:', error);
       throw new Error('No se pudieron cargar las salas');
@@ -82,4 +81,3 @@ export const roomsService = {
     }
   },
 };
-
