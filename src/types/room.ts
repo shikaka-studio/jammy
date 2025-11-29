@@ -49,3 +49,16 @@ export interface CreateRoomFormData {
   coverImage: File | null;
 }
 
+export interface HistorySong extends Song {
+  playedAt: Date;
+  addedBy: string;
+}
+
+export interface RoomSession {
+  id: string;
+  date: Date;
+  songs: HistorySong[];
+}
+
+export type QueueTabType = 'queue' | 'recent';
+

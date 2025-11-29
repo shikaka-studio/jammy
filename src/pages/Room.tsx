@@ -2,8 +2,8 @@ import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import SongSearch from '@/components/room/SongSearch';
 import SongPlayer from '@/components/room/SongPlayer';
-import SongQueue from '@/components/room/SongQueue';
-import type { Song, QueueSong, SearchResult, PlayerState } from '@/types/room';
+import SongQueueTabs from '@/components/room/SongQueueTabs';
+import type { Song, QueueSong, SearchResult, PlayerState, HistorySong, RoomSession } from '@/types/room';
 
 // Mock data for development
 const MOCK_CURRENT_SONG: Song = {
@@ -53,6 +53,102 @@ const MOCK_SEARCH_RESULTS: SearchResult[] = [
     albumCover: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&h=300&fit=crop',
     duration: 200,
     album: 'Midnights',
+  },
+];
+
+const MOCK_RECENT_SONGS: HistorySong[] = [
+  {
+    id: '10',
+    name: 'Starboy',
+    artist: 'The Weeknd',
+    albumCover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
+    duration: 230,
+    playedAt: new Date(Date.now() - 1000 * 60 * 5),
+    addedBy: 'user3',
+  },
+  {
+    id: '11',
+    name: 'Levitating',
+    artist: 'Dua Lipa',
+    albumCover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop',
+    duration: 203,
+    playedAt: new Date(Date.now() - 1000 * 60 * 10),
+    addedBy: 'user1',
+  },
+];
+
+const MOCK_SESSIONS: RoomSession[] = [
+  {
+    id: 'session-1',
+    date: new Date(Date.now() - 1000 * 60 * 60 * 24),
+    songs: [
+      {
+        id: '20',
+        name: 'Shape of You',
+        artist: 'Ed Sheeran',
+        albumCover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
+        duration: 234,
+        playedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 - 1000 * 60 * 30),
+        addedBy: 'user1',
+      },
+      {
+        id: '21',
+        name: 'Uptown Funk',
+        artist: 'Bruno Mars',
+        albumCover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop',
+        duration: 270,
+        playedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 - 1000 * 60 * 25),
+        addedBy: 'user2',
+      },
+      {
+        id: '22',
+        name: "Can't Stop the Feeling",
+        artist: 'Justin Timberlake',
+        albumCover: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=300&h=300&fit=crop',
+        duration: 237,
+        playedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 - 1000 * 60 * 20),
+        addedBy: 'user3',
+      },
+    ],
+  },
+  {
+    id: 'session-2',
+    date: new Date(Date.now() - 1000 * 60 * 60 * 48),
+    songs: [
+      {
+        id: '30',
+        name: 'Believer',
+        artist: 'Imagine Dragons',
+        albumCover: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&h=300&fit=crop',
+        duration: 204,
+        playedAt: new Date(Date.now() - 1000 * 60 * 60 * 48 - 1000 * 60 * 15),
+        addedBy: 'user1',
+      },
+      {
+        id: '31',
+        name: 'Thunder',
+        artist: 'Imagine Dragons',
+        albumCover: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&h=300&fit=crop',
+        duration: 187,
+        playedAt: new Date(Date.now() - 1000 * 60 * 60 * 48 - 1000 * 60 * 10),
+        addedBy: 'user2',
+      },
+    ],
+  },
+  {
+    id: 'session-3',
+    date: new Date(Date.now() - 1000 * 60 * 60 * 72),
+    songs: [
+      {
+        id: '40',
+        name: 'Photograph',
+        artist: 'Ed Sheeran',
+        albumCover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
+        duration: 258,
+        playedAt: new Date(Date.now() - 1000 * 60 * 60 * 72 - 1000 * 60 * 10),
+        addedBy: 'user4',
+      },
+    ],
   },
 ];
 
@@ -124,7 +220,11 @@ const Room = () => {
 
           {/* Right column: Song queue */}
           <div className="flex">
-            <SongQueue queue={queue} />
+            <SongQueueTabs
+              queue={queue}
+              recentSongs={MOCK_RECENT_SONGS}
+              sessions={MOCK_SESSIONS}
+            />
           </div>
         </div>
       </div>

@@ -9,6 +9,20 @@ export const ROOM_TEXTS = {
   NOW_PLAYING: 'Reproduciendo ahora',
 } as const;
 
+export const QUEUE_TABS = {
+  QUEUE: 'En cola',
+  RECENT: 'Recientes',
+} as const;
+
+export const HISTORY_MODAL = {
+  TITLE: 'Historial de sesiones',
+  SONGS_LABEL: 'canciones',
+  SONG_LABEL: 'canción',
+  EXPORT_BUTTON: 'Exportar a Spotify',
+  EMPTY_MESSAGE: 'No hay sesiones anteriores',
+  PLAYED_AT: 'Reproducida a las',
+} as const;
+
 export const PLAYER_CONTROLS = {
   VOLUME_STEP: 0.1,
   SEEK_STEP: 5,
