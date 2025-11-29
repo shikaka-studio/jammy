@@ -67,7 +67,7 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
       .filter((tag) => tag.toLowerCase().includes(searchTerm));
   }, [tagInput, availableTags, formData.tags]);
 
-  const showCreateOption = tagInput.trim().length > 0 && 
+  const showCreateOption = tagInput.trim().length > 0 &&
     !availableTags.includes(tagInput.trim().toLowerCase()) &&
     !formData.tags.includes(tagInput.trim().toLowerCase());
 
@@ -120,7 +120,7 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
 
     if (e.key === 'Enter') {
       e.preventDefault();
-      
+
       if (totalOptions > 0 && isTagDropdownOpen) {
         if (highlightedIndex < filteredTags.length) {
           handleAddTag(filteredTags[highlightedIndex]);
@@ -131,7 +131,7 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
           return;
         }
       }
-      
+
       if (tagInput.trim().length > 0) {
         handleAddTag(tagInput);
       }
@@ -204,6 +204,8 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
     e.preventDefault();
     if (!formData.name.trim()) return;
 
+    // Solo enviamos el nombre, el backend solo necesita name y host_spotify_id
+    // Los demás campos (tags, description, coverImage) se pueden usar en el futuro
     onSubmit(formData);
     handleClose();
   };
@@ -267,11 +269,10 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
                     key={tag}
                     type="button"
                     onClick={() => handleAddTag(tag)}
-                    className={`block w-full px-4 py-2.5 text-left text-sm capitalize transition ${
-                      highlightedIndex === index
+                    className={`block w-full px-4 py-2.5 text-left text-sm capitalize transition ${highlightedIndex === index
                         ? 'bg-primary/20 text-primary'
                         : 'text-text-primary hover:bg-surface-hover'
-                    }`}
+                      }`}
                   >
                     {tag}
                   </button>
@@ -280,11 +281,10 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
                   <button
                     type="button"
                     onClick={() => handleAddTag(tagInput)}
-                    className={`block w-full px-4 py-2.5 text-left text-sm transition ${
-                      highlightedIndex === filteredTags.length
+                    className={`block w-full px-4 py-2.5 text-left text-sm transition ${highlightedIndex === filteredTags.length
                         ? 'bg-primary/20 text-primary'
                         : 'text-text-primary hover:bg-surface-hover'
-                    }`}
+                      }`}
                   >
                     Crear "<span className="font-medium">{tagInput.trim().toLowerCase()}</span>"
                   </button>
@@ -344,11 +344,10 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`relative cursor-pointer overflow-hidden rounded-xl border-2 border-dashed transition ${
-              isDragging
+            className={`relative cursor-pointer overflow-hidden rounded-xl border-2 border-dashed transition ${isDragging
                 ? 'border-primary bg-primary/10'
                 : 'border-border hover:border-primary/50'
-            }`}
+              }`}
           >
             <input
               ref={fileInputRef}

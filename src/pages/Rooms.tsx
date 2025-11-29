@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import Container from '@/ui/Container';
 import RoomsHeader from '@/components/rooms/RoomsHeader';
@@ -6,67 +6,16 @@ import RoomFilters from '@/components/rooms/RoomFilters';
 import RoomGrid from '@/components/rooms/RoomGrid';
 import CreateRoomModal from '@/components/rooms/CreateRoomModal';
 import type { Room, RoomFilter, CreateRoomFormData } from '@/types/room';
-
-const MOCK_ROOMS: Room[] = [
-    {
-        id: '1',
-        name: 'Sala de Rock de los 90',
-        coverImage: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=400&h=400&fit=crop',
-        currentSong: { artist: 'Nirvana', title: 'Smells Like Teen Spirit' },
-        usersCount: 5,
-        tags: ['rock', '90s', 'grunge'],
-        createdAt: new Date('2025-11-20'),
-    },
-    {
-        id: '2',
-        name: 'Indie Chill Vibes',
-        coverImage: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400&h=400&fit=crop',
-        currentSong: { artist: 'Tame Impala', title: 'The Less I Know The Better' },
-        usersCount: 12,
-        tags: ['indie', 'chill', 'alternativo'],
-        createdAt: new Date('2025-11-25'),
-    },
-    {
-        id: '3',
-        name: 'Fiesta Latina',
-        coverImage: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&h=400&fit=crop',
-        currentSong: { artist: 'Bad Bunny', title: 'Tití Me Preguntó' },
-        usersCount: 8,
-        tags: ['latina', 'reggaeton', 'fiesta'],
-        createdAt: new Date('2025-11-28'),
-    },
-    {
-        id: '4',
-        name: 'Lo-fi para Estudiar',
-        coverImage: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop',
-        currentSong: { artist: 'potsu', title: "i'm closing my eyes" },
-        usersCount: 25,
-        tags: ['lofi', 'estudio', 'chill', 'relax'],
-        createdAt: new Date('2025-11-15'),
-    },
-    {
-        id: '5',
-        name: 'Éxitos de los 80',
-        coverImage: 'https://images.unsplash.com/photo-1526478806334-5fd488fcaabc?w=400&h=400&fit=crop',
-        currentSong: { artist: 'A-ha', title: 'Take on Me' },
-        usersCount: 3,
-        tags: ['pop', '80s', 'retro'],
-        createdAt: new Date('2025-11-10'),
-    },
-    {
-        id: '6',
-        name: 'Top 50 Global',
-        coverImage: 'https://images.unsplash.com/photo-1516575334481-f85287c2c82d?w=400&h=400&fit=crop',
-        currentSong: { artist: 'Taylor Swift', title: 'Fortnight' },
-        usersCount: 18,
-        tags: ['pop', 'hits', 'global'],
-        createdAt: new Date('2025-11-29'),
-    },
-];
+import { roomsService } from '@/services/rooms';
+import { useAuthStore } from '@/stores/auth';
 
 const getAllTags = (rooms: Room[]): string[] => {
     const tagsSet = new Set<string>();
-    rooms.forEach((room) => room.tags.forEach((tag) => tagsSet.add(tag)));
+    rooms.forEach((room) => {
+        if (room.room.tags && Array.isArray(room.room.tags)) {
+            room.room.tags.forEach((tag) => tagsSet.add(tag));
+        }
+    });
     return Array.from(tagsSet).sort();
 };
 
@@ -76,15 +25,19 @@ const filterRooms = (rooms: Room[], filter: RoomFilter): Room[] => {
     }
 
     if (filter.type === 'popular') {
-        return [...rooms].sort((a, b) => b.usersCount - a.usersCount);
+        return [...rooms].sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0));
     }
 
     if (filter.type === 'recent') {
-        return [...rooms].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        return [...rooms].sort((a, b) => 
+            new Date(b.room.created_at).getTime() - new Date(a.room.created_at).getTime()
+        );
     }
 
     if (filter.type === 'tag' && filter.value) {
-        return rooms.filter((room) => room.tags.includes(filter.value!));
+        return rooms.filter((room) => 
+            room.room.tags && Array.isArray(room.room.tags) && room.room.tags.includes(filter.value!)
+        );
     }
 
     return rooms;
@@ -93,36 +46,108 @@ const filterRooms = (rooms: Room[], filter: RoomFilter): Room[] => {
 const Rooms = () => {
     const [activeFilter, setActiveFilter] = useState<RoomFilter>({ type: 'all' });
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const availableTags = useMemo(() => getAllTags(MOCK_ROOMS), []);
+    const { user } = useAuthStore();
+
+    useEffect(() => {
+        loadRooms();
+    }, []);
+
+    const loadRooms = async () => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            const data = await roomsService.getRooms();
+            setRooms(data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error al cargar las salas');
+            console.error('Error loading rooms:', err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const availableTags = useMemo(() => getAllTags(rooms), [rooms]);
 
     const filteredRooms = useMemo(
-        () => filterRooms(MOCK_ROOMS, activeFilter),
-        [activeFilter]
+        () => filterRooms(rooms, activeFilter),
+        [rooms, activeFilter]
     );
 
-    const handleCreateRoom = (data: CreateRoomFormData) => {
-        // TODO: Implementar lógica de creación de sala con API
-        console.log('Creating room:', data);
+    const handleCreateRoom = async (data: CreateRoomFormData) => {
+        if (!user?.spotify_id) {
+            setError('Debes iniciar sesión para crear una sala');
+            return;
+        }
+
+        try {
+            setError(null);
+            const newRoom = await roomsService.createRoom(data.name, user.spotify_id);
+            setRooms((prev) => [newRoom, ...prev]);
+            setIsCreateModalOpen(false);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error al crear la sala');
+            console.error('Error creating room:', err);
+        }
+    };
+
+    const handleCreateRoomClick = () => {
+        if (!user) {
+            setError('Debes iniciar sesión para crear una sala');
+            return;
+        }
+        setIsCreateModalOpen(true);
     };
 
     return (
         <Layout>
             <Container>
                 <div className="space-y-8 py-12">
-                    <RoomsHeader onCreateRoom={() => setIsCreateModalOpen(true)} />
+                    <RoomsHeader onCreateRoom={handleCreateRoomClick} />
+
+                    {error && (
+                        <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-red-500 text-sm">
+                            {error}
+                        </div>
+                    )}
+
                     <RoomFilters
                         activeFilter={activeFilter}
                         availableTags={availableTags}
                         onFilterChange={setActiveFilter}
                     />
-                    <RoomGrid rooms={filteredRooms} />
+
+                    {isLoading ? (
+                        <div className="flex items-center justify-center py-20">
+                            <div className="text-text-secondary">Cargando salas...</div>
+                        </div>
+                    ) : filteredRooms.length === 0 ? (
+                        <div className="flex items-center justify-center py-20">
+                            <div className="text-center space-y-2">
+                                <p className="text-text-secondary">No hay salas disponibles</p>
+                                <button
+                                    onClick={() => setIsCreateModalOpen(true)}
+                                    className="text-primary hover:text-primary/80 transition"
+                                >
+                                    Crear la primera sala
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <RoomGrid rooms={filteredRooms} />
+                    )}
                 </div>
             </Container>
 
             <CreateRoomModal
                 isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
+                onClose={() => {
+                    setIsCreateModalOpen(false);
+                    setError(null);
+                }}
                 onSubmit={handleCreateRoom}
                 availableTags={availableTags}
             />

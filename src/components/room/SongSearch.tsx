@@ -7,12 +7,16 @@ interface SongSearchProps {
   searchResults: SearchResult[];
   onSearch: (query: string) => void;
   onAddSong: (song: SearchResult) => void;
+  isSearching?: boolean;
 }
 
-const SongSearch = ({ searchResults, onSearch, onAddSong }: SongSearchProps) => {
+const DEBOUNCE_DELAY = 500; // 500ms
+
+const SongSearch = ({ searchResults, onSearch, onAddSong, isSearching = false }: SongSearchProps) => {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -25,11 +29,35 @@ const SongSearch = ({ searchResults, onSearch, onAddSong }: SongSearchProps) => 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    // Limpiar el timer cuando el componente se desmonte
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-    onSearch(value);
     setIsOpen(value.length > 0);
+
+    // Limpiar el timer anterior
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Si la query está vacía, limpiar resultados inmediatamente
+    if (value.trim().length === 0) {
+      onSearch('');
+      return;
+    }
+
+    // Crear nuevo timer para debounce
+    debounceTimerRef.current = setTimeout(() => {
+      onSearch(value);
+    }, DEBOUNCE_DELAY);
   };
 
   const handleAddSong = (song: SearchResult) => {
@@ -55,12 +83,17 @@ const SongSearch = ({ searchResults, onSearch, onAddSong }: SongSearchProps) => 
       {isOpen && (
         <div className="absolute z-50 mt-2 w-full rounded-2xl bg-surface shadow-xl">
           <div className="max-h-80 overflow-y-auto p-2">
-            {searchResults.length === 0 && query.length > 0 && (
+            {isSearching && (
+              <p className="p-4 text-center text-sm text-text-secondary">
+                Buscando canciones...
+              </p>
+            )}
+            {!isSearching && searchResults.length === 0 && query.length > 0 && (
               <p className="p-4 text-center text-sm text-text-secondary">
                 {ROOM_TEXTS.NO_RESULTS}
               </p>
             )}
-            {searchResults.map((song) => (
+            {!isSearching && searchResults.map((song) => (
               <SearchResultItem
                 key={song.id}
                 song={song}
