@@ -194,8 +194,8 @@ const Room = () => {
         setRoom(roomData);
 
         // Verificar si el usuario ya es miembro
-        const isMember = roomData.members.some(
-          (member) => member.spotify_id === user?.spotify_id
+        const isMember = roomData.members?.some(
+          (member) => member.users?.spotify_id === user?.spotify_id
         );
 
         // Si no es miembro, unirse automáticamente
@@ -258,7 +258,10 @@ const Room = () => {
 
     if (!roomCode || !room) return;
 
-    if (room.host.spotify_id !== user.spotify_id) {
+    // Verificar si el usuario es el host comparando con host_id o host.spotify_id
+    const userIsHost = checkIsHost(room, user.id);
+
+    if (!userIsHost) {
       setError('Solo el host puede cerrar la sala');
       return;
     }
@@ -277,7 +280,20 @@ const Room = () => {
     }
   };
 
-  const isHost = room?.host.spotify_id === user?.spotify_id;
+  // Verificar si el usuario actual es el host de la sala
+  const checkIsHost = (roomData: RoomType | null, userId?: string): boolean => {
+    if (!roomData || !userId) return false;
+
+    // Primero intentar con host_id (UUID del usuario)
+    if (roomData.room.host_id === userId) return true;
+
+    // Si hay objeto host, comparar con spotify_id
+    if (roomData.room.host?.spotify_id === user?.spotify_id) return true;
+
+    return false;
+  };
+
+  const isHost = checkIsHost(room, user?.id);
 
   const handleTogglePlay = () => {
     setPlayerState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
@@ -371,9 +387,9 @@ const Room = () => {
         <div className="px-6 md:px-12 xl:px-6 pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-text-primary">{room?.name}</h1>
+              <h1 className="text-2xl font-bold text-text-primary">{room?.room.name}</h1>
               <p className="text-sm text-text-secondary">
-                {room?.members.length} {room?.members.length === 1 ? 'miembro' : 'miembros'}
+                {room?.members?.length || 0} {room?.members?.length === 1 ? 'miembro' : 'miembros'}
                 {isHost && <span className="ml-2 text-primary">(Host)</span>}
               </p>
             </div>

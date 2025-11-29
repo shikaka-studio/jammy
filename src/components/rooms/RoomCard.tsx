@@ -28,32 +28,32 @@ const UsersIcon = () => (
 const RoomCard = ({ room }: RoomCardProps) => {
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
         const target = e.currentTarget;
-        target.src = `https://via.placeholder.com/400/231a30/ffffff?text=${encodeURIComponent(room.name.substring(0, 2))}`;
+        target.src = `https://via.placeholder.com/400/231a30/ffffff?text=${encodeURIComponent(room.room.name.substring(0, 2))}`;
     };
 
-    const usersCount = room.members.length;
-    const defaultCoverImage = `https://via.placeholder.com/400/231a30/ffffff?text=${encodeURIComponent(room.name.substring(0, 2))}`;
+    const usersCount = room.members?.length || 0;
+    const defaultCoverImage = `https://via.placeholder.com/400/231a30/ffffff?text=${encodeURIComponent(room.room.name.substring(0, 2))}`;
 
     return (
         <Link
-            to={ROUTES.ROOM(room.room_code)}
+            to={ROUTES.ROOM(room.room.room_code)}
             className="group block rounded-2xl bg-background-elevated p-4 transition hover:bg-surface-hover"
         >
             <div className="aspect-square overflow-hidden rounded-xl">
                 <img
-                    src={room.coverImage || defaultCoverImage}
-                    alt={room.name}
+                    src={room.room.cover_image || defaultCoverImage}
+                    alt={room.room.name}
                     className="h-full w-full object-cover transition group-hover:scale-105"
                     onError={handleImageError}
                 />
             </div>
             <div className="mt-4 space-y-1">
                 <h3 className="truncate text-base font-semibold text-text-primary">
-                    {room.name}
+                    {room.room.name}
                 </h3>
-                {room.currentSong ? (
+                {room.room.current_track_uri ? (
                     <p className="truncate text-sm text-text-secondary">
-                        {room.currentSong.artist} - {room.currentSong.title}
+                        Reproduciendo música
                     </p>
                 ) : (
                     <p className="truncate text-sm text-text-secondary">

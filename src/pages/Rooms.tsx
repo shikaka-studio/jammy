@@ -12,8 +12,8 @@ import { useAuthStore } from '@/stores/auth';
 const getAllTags = (rooms: Room[]): string[] => {
     const tagsSet = new Set<string>();
     rooms.forEach((room) => {
-        if (room.tags) {
-            room.tags.forEach((tag) => tagsSet.add(tag));
+        if (room.room.tags && Array.isArray(room.room.tags)) {
+            room.room.tags.forEach((tag) => tagsSet.add(tag));
         }
     });
     return Array.from(tagsSet).sort();
@@ -25,15 +25,19 @@ const filterRooms = (rooms: Room[], filter: RoomFilter): Room[] => {
     }
 
     if (filter.type === 'popular') {
-        return [...rooms].sort((a, b) => b.members.length - a.members.length);
+        return [...rooms].sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0));
     }
 
     if (filter.type === 'recent') {
-        return [...rooms].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        return [...rooms].sort((a, b) => 
+            new Date(b.room.created_at).getTime() - new Date(a.room.created_at).getTime()
+        );
     }
 
     if (filter.type === 'tag' && filter.value) {
-        return rooms.filter((room) => room.tags?.includes(filter.value!));
+        return rooms.filter((room) => 
+            room.room.tags && Array.isArray(room.room.tags) && room.room.tags.includes(filter.value!)
+        );
     }
 
     return rooms;
