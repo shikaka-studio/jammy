@@ -85,7 +85,7 @@ const SongSearch = ({ searchResults, onSearch, onAddSong, isSearching = false }:
           <div className="max-h-80 overflow-y-auto p-2">
             {isSearching && (
               <p className="p-4 text-center text-sm text-text-secondary">
-                Buscando canciones...
+                Searching songs...
               </p>
             )}
             {!isSearching && searchResults.length === 0 && query.length > 0 && (

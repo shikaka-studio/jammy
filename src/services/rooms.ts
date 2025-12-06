@@ -15,7 +15,7 @@ export const roomsService = {
       return response.data;
     } catch (error) {
       console.error('Failed to get rooms:', error);
-      throw new Error('No se pudieron cargar las salas');
+      throw new Error('Could not load rooms');
     }
   },
 
@@ -29,7 +29,7 @@ export const roomsService = {
       return response.data;
     } catch (error) {
       console.error('Failed to create room:', error);
-      throw new Error('No se pudo crear la sala');
+      throw new Error('Could not create room');
     }
   },
 
@@ -43,7 +43,7 @@ export const roomsService = {
       return response.data;
     } catch (error) {
       console.error('Failed to join room:', error);
-      throw new Error('No se pudo unir a la sala');
+      throw new Error('Could not join room');
     }
   },
 
@@ -53,7 +53,7 @@ export const roomsService = {
       return response.data;
     } catch (error) {
       console.error('Failed to get room details:', error);
-      throw new Error('No se pudieron cargar los detalles de la sala');
+      throw new Error('Could not load room details');
     }
   },
 
@@ -65,7 +65,7 @@ export const roomsService = {
       await apiClient.post(API_ENDPOINTS.ROOMS.LEAVE(roomCode), null, { params });
     } catch (error) {
       console.error('Failed to leave room:', error);
-      throw new Error('No se pudo salir de la sala');
+      throw new Error('Could not leave room');
     }
   },
 
@@ -77,7 +77,7 @@ export const roomsService = {
       await apiClient.delete(API_ENDPOINTS.ROOMS.CLOSE(roomCode), { params });
     } catch (error) {
       console.error('Failed to close room:', error);
-      throw new Error('No se pudo cerrar la sala');
+      throw new Error('Could not close room');
     }
   },
 };

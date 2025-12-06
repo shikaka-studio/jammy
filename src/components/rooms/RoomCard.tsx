@@ -50,9 +50,9 @@ const RoomCard = ({ room }: RoomCardProps) => {
       <div className='mt-4 space-y-1'>
         <h3 className='text-text-primary truncate text-base font-semibold'>{room.name}</h3>
         {room.current_track_uri ? (
-          <p className='text-text-secondary truncate text-sm'>Reproduciendo música</p>
+          <p className='text-text-secondary truncate text-sm'>Playing music</p>
         ) : (
-          <p className='text-text-secondary truncate text-sm'>Sin música activa</p>
+          <p className='text-text-secondary truncate text-sm'>No active music</p>
         )}
         <div className='text-text-secondary flex items-center gap-1.5 pt-1'>
           <UsersIcon />

@@ -66,7 +66,7 @@ const Rooms = () => {
       console.log(data);
       setRooms(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar las salas');
+      setError(err instanceof Error ? err.message : 'Error loading rooms');
       console.error('Error loading rooms:', err);
     } finally {
       setIsLoading(false);
@@ -79,7 +79,7 @@ const Rooms = () => {
 
   const handleCreateRoom = async (data: CreateRoomFormData) => {
     if (!user?.spotify_id) {
-      setError('Debes iniciar sesión para crear una sala');
+      setError('You must log in to create a room');
       return;
     }
 
@@ -89,14 +89,14 @@ const Rooms = () => {
       setRooms((prev) => [newRoom, ...prev]);
       setIsCreateModalOpen(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al crear la sala');
+      setError(err instanceof Error ? err.message : 'Error creating room');
       console.error('Error creating room:', err);
     }
   };
 
   const handleCreateRoomClick = () => {
     if (!user) {
-      setError('Debes iniciar sesión para crear una sala');
+      setError('You must log in to create a room');
       return;
     }
     setIsCreateModalOpen(true);
@@ -122,17 +122,17 @@ const Rooms = () => {
 
           {isLoading ? (
             <div className='flex items-center justify-center py-20'>
-              <div className='text-text-secondary'>Cargando salas...</div>
+              <div className='text-text-secondary'>Loading rooms...</div>
             </div>
           ) : filteredRooms.length === 0 ? (
             <div className='flex items-center justify-center py-20'>
               <div className='space-y-2 text-center'>
-                <p className='text-text-secondary'>No hay salas disponibles</p>
+                <p className='text-text-secondary'>No rooms available</p>
                 <button
                   onClick={() => setIsCreateModalOpen(true)}
                   className='text-primary hover:text-primary/80 transition'
                 >
-                  Crear la primera sala
+                  Create the first room
                 </button>
               </div>
             </div>

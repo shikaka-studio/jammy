@@ -158,21 +158,21 @@ const MOCK_CHAT_MESSAGES: ChatMessage[] = [
     id: 'msg-1',
     userId: 'user1',
     userName: 'Carlos',
-    message: '¡Qué buena canción! 🎵',
+    message: 'What a great song! 🎵',
     timestamp: new Date(Date.now() - 1000 * 60 * 10),
   },
   {
     id: 'msg-2',
     userId: 'user2',
-    userName: 'María',
-    message: 'Alguien puede poner algo de rock?',
+    userName: 'Maria',
+    message: 'Can someone play some rock?',
     timestamp: new Date(Date.now() - 1000 * 60 * 8),
   },
   {
     id: 'msg-3',
     userId: 'user3',
     userName: 'Pablo',
-    message: 'Yo añado una ahora mismo',
+    message: "I'll add one right now",
     timestamp: new Date(Date.now() - 1000 * 60 * 5),
   },
 ];
@@ -220,14 +220,14 @@ const Room = () => {
             const updatedRoom = await roomsService.joinRoom(roomCode, user.spotify_id);
             setRoom(updatedRoom);
           } catch (joinErr) {
-            setError(joinErr instanceof Error ? joinErr.message : 'Error al unirse a la sala');
+            setError(joinErr instanceof Error ? joinErr.message : 'Error joining the room');
             console.error('Error joining room:', joinErr);
           } finally {
             setIsJoining(false);
           }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error al cargar la sala');
+        setError(err instanceof Error ? err.message : 'Error loading room');
         console.error('Error loading room:', err);
       } finally {
         setIsLoading(false);
@@ -235,7 +235,7 @@ const Room = () => {
     };
 
     if (!user) {
-      setError('Debes iniciar sesión para acceder a una sala');
+      setError('You must log in to access a room');
       setIsLoading(false);
       return;
     }
@@ -247,27 +247,27 @@ const Room = () => {
 
   const handleLeaveRoom = async () => {
     if (!user?.spotify_id) {
-      setError('Debes iniciar sesión para salir de la sala');
+      setError('You must log in to leave the room');
       return;
     }
 
     if (!roomCode) return;
 
-    const confirmLeave = window.confirm('¿Estás seguro de que quieres salir de esta sala?');
+    const confirmLeave = window.confirm('Are you sure you want to leave this room?');
     if (!confirmLeave) return;
 
     try {
       await roomsService.leaveRoom(roomCode, user.spotify_id);
       navigate(ROUTES.ROOMS);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al salir de la sala');
+      setError(err instanceof Error ? err.message : 'Error leaving room');
       console.error('Error leaving room:', err);
     }
   };
 
   const handleCloseRoom = async () => {
     if (!user?.spotify_id) {
-      setError('Debes iniciar sesión para cerrar la sala');
+      setError('You must log in to close the room');
       return;
     }
 
@@ -277,12 +277,12 @@ const Room = () => {
     const userIsHost = checkIsHost(room, user.id);
 
     if (!userIsHost) {
-      setError('Solo el host puede cerrar la sala');
+      setError('Only the host can close the room');
       return;
     }
 
     const confirmClose = window.confirm(
-      '¿Estás seguro de que quieres cerrar esta sala? Todos los miembros serán desconectados.'
+      'Are you sure you want to close this room? All members will be disconnected.'
     );
     if (!confirmClose) return;
 
@@ -290,7 +290,7 @@ const Room = () => {
       await roomsService.closeRoom(roomCode, user.spotify_id);
       navigate(ROUTES.ROOMS);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cerrar la sala');
+      setError(err instanceof Error ? err.message : 'Error closing room');
       console.error('Error closing room:', err);
     }
   };
@@ -330,7 +330,7 @@ const Room = () => {
       const results = await spotifyService.searchTracks(query);
       setSearchResults(results);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al buscar canciones');
+      setError(err instanceof Error ? err.message : 'Error searching songs');
       console.error('Error searching songs:', err);
       setSearchResults([]);
     } finally {
@@ -352,7 +352,7 @@ const Room = () => {
     const newMessage: ChatMessage = {
       id: `msg-${Date.now()}`,
       userId: 'currentUser',
-      userName: 'Tú',
+      userName: 'You',
       message,
       timestamp: new Date(),
     };
@@ -363,7 +363,7 @@ const Room = () => {
     return (
       <Layout>
         <div className='flex h-[calc(100vh-56.5px)] items-center justify-center'>
-          <div className='text-text-secondary'>Cargando sala...</div>
+          <div className='text-text-secondary'>Loading room...</div>
         </div>
       </Layout>
     );
@@ -378,7 +378,7 @@ const Room = () => {
             onClick={() => navigate(ROUTES.ROOMS)}
             className='bg-primary hover:bg-primary/90 rounded-xl px-6 py-2 text-gray-900 transition'
           >
-            Volver a salas
+            Back to rooms
           </button>
         </div>
       </Layout>
@@ -389,7 +389,7 @@ const Room = () => {
     return (
       <Layout>
         <div className='flex h-[calc(100vh-56.5px)] items-center justify-center'>
-          <div className='text-text-secondary'>Uniéndose a la sala...</div>
+          <div className='text-text-secondary'>Joining the room...</div>
         </div>
       </Layout>
     );
@@ -404,7 +404,7 @@ const Room = () => {
             <div>
               <h1 className='text-text-primary text-2xl font-bold'>{room?.name}</h1>
               <p className='text-text-secondary text-sm'>
-                {room?.members?.length || 0} {room?.members?.length === 1 ? 'miembro' : 'miembros'}
+                {room?.members?.length || 0} {room?.members?.length === 1 ? 'member' : 'members'}
                 {isHost && <span className='text-primary ml-2'>(Host)</span>}
               </p>
             </div>
@@ -413,14 +413,14 @@ const Room = () => {
                 onClick={handleLeaveRoom}
                 className='border-border text-text-primary hover:bg-surface-hover rounded-xl border bg-transparent px-4 py-2 text-sm font-medium transition'
               >
-                Salir
+                Leave
               </button>
               {isHost && (
                 <button
                   onClick={handleCloseRoom}
                   className='rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600'
                 >
-                  Cerrar sala
+                  Close room
                 </button>
               )}
             </div>

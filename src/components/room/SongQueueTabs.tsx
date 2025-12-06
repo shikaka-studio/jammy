@@ -86,7 +86,7 @@ const SongQueueTabs = ({ queue, recentSongs, sessions, messages, onSendMessage }
       if (queue.length === 0) {
         return (
           <p className="text-center text-sm text-text-secondary">
-            No hay canciones en cola
+            No songs in queue
           </p>
         );
       }
@@ -100,7 +100,7 @@ const SongQueueTabs = ({ queue, recentSongs, sessions, messages, onSendMessage }
     if (recentSongs.length === 0) {
       return (
         <p className="text-center text-sm text-text-secondary">
-          No hay canciones recientes
+          No recent songs
         </p>
       );
     }

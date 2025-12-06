@@ -1,33 +1,33 @@
 export const SKIP_VOTES_REQUIRED = 5;
 
 export const ROOM_TEXTS = {
-  QUEUE_TITLE: 'A continuación en la cola',
-  SEARCH_PLACEHOLDER: 'Busca una canción en Spotify...',
-  ADD_BUTTON: 'Añadir',
-  SKIP_LABEL: 'para saltar',
-  NO_RESULTS: 'No se encontraron resultados',
-  NOW_PLAYING: 'Reproduciendo ahora',
+  QUEUE_TITLE: 'Up next in the queue',
+  SEARCH_PLACEHOLDER: 'Search for a song on Spotify...',
+  ADD_BUTTON: 'Add',
+  SKIP_LABEL: 'to skip',
+  NO_RESULTS: 'No results found',
+  NOW_PLAYING: 'Now Playing',
 } as const;
 
 export const QUEUE_TABS = {
-  QUEUE: 'En cola',
-  RECENT: 'Recientes',
+  QUEUE: 'Queue',
+  RECENT: 'Recent',
   CHAT: 'Chat',
 } as const;
 
 export const CHAT_TEXTS = {
-  PLACEHOLDER: 'Escribe un mensaje...',
-  EMPTY_MESSAGE: 'No hay mensajes aún. ¡Sé el primero en escribir!',
-  SEND_BUTTON: 'Enviar',
+  PLACEHOLDER: 'Write a message...',
+  EMPTY_MESSAGE: 'No messages yet. Be the first to write!',
+  SEND_BUTTON: 'Send',
 } as const;
 
 export const HISTORY_MODAL = {
-  TITLE: 'Historial de sesiones',
-  SONGS_LABEL: 'canciones',
-  SONG_LABEL: 'canción',
-  EXPORT_BUTTON: 'Exportar a Spotify',
-  EMPTY_MESSAGE: 'No hay sesiones anteriores',
-  PLAYED_AT: 'Reproducida a las',
+  TITLE: 'Session History',
+  SONGS_LABEL: 'songs',
+  SONG_LABEL: 'song',
+  EXPORT_BUTTON: 'Export to Spotify',
+  EMPTY_MESSAGE: 'No previous sessions',
+  PLAYED_AT: 'Played at',
 } as const;
 
 export const PLAYER_CONTROLS = {
@@ -36,30 +36,30 @@ export const PLAYER_CONTROLS = {
 } as const;
 
 export const BASE_ROOM_FILTERS = [
-  { type: 'all', label: 'Todas' },
-  { type: 'popular', label: 'Más populares' },
-  { type: 'recent', label: 'Recién creadas' },
+  { type: 'all', label: 'All' },
+  { type: 'popular', label: 'Most popular' },
+  { type: 'recent', label: 'Recently created' },
 ] as const;
 
 export const ROOMS_PAGE_TEXTS = {
-  TITLE: 'Explora la galaxia',
-  SUBTITLE: 'Explora las salas de música activas o crea la tuya.',
-  CREATE_BUTTON: 'Crear Nueva Sala',
-  USERS_LABEL: 'usuarios',
+  TITLE: 'Explore the galaxy',
+  SUBTITLE: 'Explore active music rooms or create your own.',
+  CREATE_BUTTON: 'Create New Room',
+  USERS_LABEL: 'users',
 } as const;
 
 export const CREATE_ROOM_MODAL = {
-  TITLE: 'Crear Nueva Sala',
-  NAME_LABEL: 'Nombre de la sala',
-  NAME_PLACEHOLDER: 'Ej: Rock de los 90',
+  TITLE: 'Create New Room',
+  NAME_LABEL: 'Room Name',
+  NAME_PLACEHOLDER: 'E.g.: 90s Rock',
   TAGS_LABEL: 'Tags',
-  TAGS_PLACEHOLDER: 'Escribe tags separados por comas (ej: rock, 90s, grunge)',
-  DESCRIPTION_LABEL: 'Descripción',
-  DESCRIPTION_PLACEHOLDER: 'Describe el ambiente de tu sala...',
-  COVER_LABEL: 'Imagen de portada',
-  COVER_HINT: 'Arrastra una imagen o haz clic para seleccionar',
-  COVER_CHANGE: 'Cambiar imagen',
-  SUBMIT_BUTTON: 'Crear Sala',
-  CANCEL_BUTTON: 'Cancelar',
+  TAGS_PLACEHOLDER: 'Enter tags separated by commas (e.g., rock, 90s, grunge)',
+  DESCRIPTION_LABEL: 'Description',
+  DESCRIPTION_PLACEHOLDER: 'Describe the vibe of your room...',
+  COVER_LABEL: 'Cover Image',
+  COVER_HINT: 'Drag an image or click to select',
+  COVER_CHANGE: 'Change image',
+  SUBMIT_BUTTON: 'Create Room',
+  CANCEL_BUTTON: 'Cancel',
 } as const;
 

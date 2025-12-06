@@ -286,7 +286,7 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
                         : 'text-text-primary hover:bg-surface-hover'
                       }`}
                   >
-                    Crear "<span className="font-medium">{tagInput.trim().toLowerCase()}</span>"
+                    Create "<span className="font-medium">{tagInput.trim().toLowerCase()}</span>"
                   </button>
                 )}
               </div>
