@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import Layout from '@/components/layout/Layout';
+import BaseLayout from '@/components/layout/BaseLayout';
 import Container from '@/ui/Container';
 import RoomsHeader from '@/components/rooms/RoomsHeader';
 import RoomFilters from '@/components/rooms/RoomFilters';
@@ -103,7 +103,7 @@ const Rooms = () => {
   };
 
   return (
-    <Layout>
+    <BaseLayout>
       <Container>
         <div className='space-y-8 py-12'>
           <RoomsHeader onCreateRoom={handleCreateRoomClick} />
@@ -151,7 +151,7 @@ const Rooms = () => {
         onSubmit={handleCreateRoom}
         availableTags={availableTags}
       />
-    </Layout>
+    </BaseLayout>
   );
 };
 

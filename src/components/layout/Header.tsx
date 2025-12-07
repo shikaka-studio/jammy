@@ -43,7 +43,7 @@ const Header = ({ isLanding = false }: HeaderProps) => {
     'transition-[background-color]',
     'ease-in-out',
     isLanding && isScrolled ? 'backdrop-blur-md bg-background/80' : 'bg-transparent',
-    !isLanding ? 'scroll' : '',
+    !isLanding ? 'scroll border-b border-background-elevated-2' : '',
   ]
     .filter(Boolean)
     .join(' ');

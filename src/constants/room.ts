@@ -44,22 +44,21 @@ export const BASE_ROOM_FILTERS = [
 export const ROOMS_PAGE_TEXTS = {
   TITLE: 'Explore the galaxy',
   SUBTITLE: 'Explore active music rooms or create your own.',
-  CREATE_BUTTON: 'Create New Room',
+  CREATE_BUTTON: 'Create new room',
   USERS_LABEL: 'users',
 } as const;
 
 export const CREATE_ROOM_MODAL = {
-  TITLE: 'Create New Room',
-  NAME_LABEL: 'Room Name',
+  TITLE: 'Create new room',
+  NAME_LABEL: 'Room name',
   NAME_PLACEHOLDER: 'E.g.: 90s Rock',
   TAGS_LABEL: 'Tags',
   TAGS_PLACEHOLDER: 'Enter tags separated by commas (e.g., rock, 90s, grunge)',
   DESCRIPTION_LABEL: 'Description',
   DESCRIPTION_PLACEHOLDER: 'Describe the vibe of your room...',
-  COVER_LABEL: 'Cover Image',
+  COVER_LABEL: 'Cover image',
   COVER_HINT: 'Drag an image or click to select',
   COVER_CHANGE: 'Change image',
-  SUBMIT_BUTTON: 'Create Room',
+  SUBMIT_BUTTON: 'Create room',
   CANCEL_BUTTON: 'Cancel',
 } as const;
-

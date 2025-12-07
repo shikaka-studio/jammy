@@ -1,5 +1,6 @@
 import { useState, useRef, useMemo } from 'react';
 import Modal from '@/ui/Modal';
+import Button from '@/ui/Button';
 import type { CreateRoomFormData } from '@/types/room';
 import { CREATE_ROOM_MODAL } from '@/constants/room';
 
@@ -12,34 +13,34 @@ interface CreateRoomModalProps {
 
 const UploadIcon = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="h-8 w-8"
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='currentColor'
+    strokeWidth='2'
+    strokeLinecap='round'
+    strokeLinejoin='round'
+    className='h-8 w-8'
   >
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <polyline points="17 8 12 3 7 8" />
-    <line x1="12" x2="12" y1="3" y2="15" />
+    <path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' />
+    <polyline points='17 8 12 3 7 8' />
+    <line x1='12' x2='12' y1='3' y2='15' />
   </svg>
 );
 
 const CloseIcon = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="h-3 w-3"
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='currentColor'
+    strokeWidth='2'
+    strokeLinecap='round'
+    strokeLinejoin='round'
+    className='h-3 w-3'
   >
-    <path d="M18 6 6 18" />
-    <path d="m6 6 12 12" />
+    <path d='M18 6 6 18' />
+    <path d='m6 6 12 12' />
   </svg>
 );
 
@@ -67,7 +68,8 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
       .filter((tag) => tag.toLowerCase().includes(searchTerm));
   }, [tagInput, availableTags, formData.tags]);
 
-  const showCreateOption = tagInput.trim().length > 0 &&
+  const showCreateOption =
+    tagInput.trim().length > 0 &&
     !availableTags.includes(tagInput.trim().toLowerCase()) &&
     !formData.tags.includes(tagInput.trim().toLowerCase());
 
@@ -79,9 +81,7 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
     onClose();
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -216,77 +216,73 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title={CREATE_ROOM_MODAL.TITLE}>
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className='space-y-5'>
         {/* Name field */}
-        <div className="space-y-2">
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-text-primary"
-          >
+        <div className='space-y-2'>
+          <label htmlFor='name' className='text-text-primary block text-sm font-medium'>
             {CREATE_ROOM_MODAL.NAME_LABEL}
           </label>
           <input
-            type="text"
-            id="name"
-            name="name"
+            type='text'
+            id='name'
+            name='name'
             value={formData.name}
             onChange={handleInputChange}
             placeholder={CREATE_ROOM_MODAL.NAME_PLACEHOLDER}
-            className="w-full rounded-xl border border-border bg-background-elevated-2 px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className='border-border bg-background-elevated-2 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:ring-primary w-full rounded-xl border px-4 py-3 focus:ring-1 focus:outline-none'
             required
           />
         </div>
 
         {/* Tags field */}
-        <div className="space-y-2">
-          <label
-            htmlFor="tags"
-            className="block text-sm font-medium text-text-primary"
-          >
+        <div className='space-y-2'>
+          <label htmlFor='tags' className='text-text-primary block text-sm font-medium'>
             {CREATE_ROOM_MODAL.TAGS_LABEL}
           </label>
 
           {/* Tag input with dropdown */}
-          <div className="relative">
+          <div className='relative'>
             <input
               ref={tagInputRef}
-              type="text"
-              id="tags"
+              type='text'
+              id='tags'
               value={tagInput}
               onChange={handleTagInputChange}
               onKeyDown={handleTagInputKeyDown}
               onFocus={handleTagInputFocus}
               onBlur={handleTagInputBlur}
               placeholder={CREATE_ROOM_MODAL.TAGS_PLACEHOLDER}
-              className="w-full rounded-xl border border-border bg-background-elevated-2 px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className='border-border bg-background-elevated-2 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:ring-primary w-full rounded-xl border px-4 py-3 focus:ring-1 focus:outline-none'
             />
 
             {/* Dropdown */}
             {isTagDropdownOpen && (filteredTags.length > 0 || showCreateOption) && (
-              <div className="absolute left-0 right-0 top-full z-10 mt-1 max-h-48 overflow-y-auto rounded-xl border border-border bg-background-elevated shadow-lg">
+              <div className='border-border bg-background-elevated absolute top-full right-0 left-0 z-10 mt-1 max-h-48 overflow-y-auto rounded-xl border shadow-lg'>
                 {filteredTags.map((tag, index) => (
                   <button
                     key={tag}
-                    type="button"
+                    type='button'
                     onClick={() => handleAddTag(tag)}
-                    className={`block w-full px-4 py-2.5 text-left text-sm capitalize transition ${highlightedIndex === index
+                    className={`block w-full px-4 py-2.5 text-left text-sm capitalize transition ${
+                      highlightedIndex === index
                         ? 'bg-primary/20 text-primary'
                         : 'text-text-primary hover:bg-surface-hover'
-                      }`}
+                    }`}
                   >
                     {tag}
                   </button>
                 ))}
                 {showCreateOption && (
                   <button
-                    type="button"
+                    type='button'
                     onClick={() => handleAddTag(tagInput)}
-                    className={`block w-full px-4 py-2.5 text-left text-sm transition ${highlightedIndex === filteredTags.length
+                    className={`block w-full px-4 py-2.5 text-left text-sm transition ${
+                      highlightedIndex === filteredTags.length
                         ? 'bg-primary/20 text-primary'
                         : 'text-text-primary hover:bg-surface-hover'
-                      }`}
+                    }`}
                   >
-                    Create "<span className="font-medium">{tagInput.trim().toLowerCase()}</span>"
+                    Create "<span className='font-medium'>{tagInput.trim().toLowerCase()}</span>"
                   </button>
                 )}
               </div>
@@ -295,17 +291,17 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
 
           {/* Selected tags as pills */}
           {formData.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className='flex flex-wrap gap-2'>
               {formData.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-gray-900"
+                  className='bg-primary inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-gray-900'
                 >
                   {tag}
                   <button
-                    type="button"
+                    type='button'
                     onClick={() => handleRemoveTag(tag)}
-                    className="rounded-full p-0.5 transition hover:bg-gray-900/20"
+                    className='rounded-full p-0.5 transition hover:bg-gray-900/20'
                   >
                     <CloseIcon />
                   </button>
@@ -316,27 +312,24 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
         </div>
 
         {/* Description field */}
-        <div className="space-y-2">
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-text-primary"
-          >
+        <div className='space-y-2'>
+          <label htmlFor='description' className='text-text-primary block text-sm font-medium'>
             {CREATE_ROOM_MODAL.DESCRIPTION_LABEL}
           </label>
           <textarea
-            id="description"
-            name="description"
+            id='description'
+            name='description'
             value={formData.description}
             onChange={handleInputChange}
             placeholder={CREATE_ROOM_MODAL.DESCRIPTION_PLACEHOLDER}
             rows={3}
-            className="w-full resize-none rounded-xl border border-border bg-background-elevated-2 px-4 py-3 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className='border-border bg-background-elevated-2 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:ring-primary w-full resize-none rounded-xl border px-4 py-3 focus:ring-1 focus:outline-none'
           />
         </div>
 
         {/* Cover image upload */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-text-primary">
+        <div className='space-y-2'>
+          <label className='text-text-primary block text-sm font-medium'>
             {CREATE_ROOM_MODAL.COVER_LABEL}
           </label>
           <div
@@ -344,56 +337,44 @@ const CreateRoomModal = ({ isOpen, onClose, onSubmit, availableTags }: CreateRoo
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`relative cursor-pointer overflow-hidden rounded-xl border-2 border-dashed transition ${isDragging
-                ? 'border-primary bg-primary/10'
-                : 'border-border hover:border-primary/50'
-              }`}
+            className={`relative cursor-pointer overflow-hidden rounded-xl border-2 border-dashed transition ${
+              isDragging ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'
+            }`}
           >
             <input
               ref={fileInputRef}
-              type="file"
-              accept="image/*"
+              type='file'
+              accept='image/*'
               onChange={handleFileInputChange}
-              className="hidden"
+              className='hidden'
             />
 
             {imagePreview ? (
-              <div className="relative aspect-video">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition hover:opacity-100">
-                  <span className="text-sm font-medium text-white">
+              <div className='relative aspect-video'>
+                <img src={imagePreview} alt='Preview' className='h-full w-full object-cover' />
+                <div className='absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition hover:opacity-100'>
+                  <span className='text-sm font-medium text-white'>
                     {CREATE_ROOM_MODAL.COVER_CHANGE}
                   </span>
                 </div>
               </div>
             ) : (
-              <div className="flex aspect-video flex-col items-center justify-center gap-2 text-text-secondary">
+              <div className='text-text-secondary flex aspect-video flex-col items-center justify-center gap-2'>
                 <UploadIcon />
-                <span className="text-sm">{CREATE_ROOM_MODAL.COVER_HINT}</span>
+                <span className='text-sm'>{CREATE_ROOM_MODAL.COVER_HINT}</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-3 pt-2">
-          <button
-            type="button"
-            onClick={handleClose}
-            className="flex-1 rounded-xl border border-border bg-transparent px-4 py-3 text-sm font-medium text-text-primary transition hover:bg-surface-hover"
-          >
+        <div className='flex gap-3 pt-2'>
+          <Button variant='secondary' full onClick={handleClose}>
             {CREATE_ROOM_MODAL.CANCEL_BUTTON}
-          </button>
-          <button
-            type="submit"
-            className="flex-1 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-gray-900 transition hover:bg-primary/90"
-          >
+          </Button>
+          <Button type='submit' full>
             {CREATE_ROOM_MODAL.SUBMIT_BUTTON}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

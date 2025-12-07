@@ -1,4 +1,5 @@
 import Container from '@/ui/Container';
+import Link from '@/ui/Link';
 import ColouredBackground from './ColouredBackground';
 
 const HeroSection = () => (
@@ -17,18 +18,18 @@ const HeroSection = () => (
             session with your loved ones is now simpler than ever.
           </p>
           <div className='mt-16 flex flex-wrap justify-center gap-x-6 gap-y-4'>
-            <a
+            <Link
               href='#'
               className='before:bg-primary relative flex h-11 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-full before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max'
             >
               <span className='relative text-base font-semibold text-gray-900'>Get started</span>
-            </a>
-            <a
+            </Link>
+            <Link
               href='#features'
               className='before:bg-primary/10 relative flex h-11 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-full before:border before:border-gray-700 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max'
             >
               <span className='relative text-base font-semibold text-white'>Learn more</span>
-            </a>
+            </Link>
           </div>
           <div className='border-background-overlay mt-16 flex flex-col justify-between gap-8 border-y py-8 sm:flex-row'>
             <div className='text-left'>
