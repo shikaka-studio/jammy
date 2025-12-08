@@ -4,7 +4,16 @@ import Layout from '@/components/layout/Layout';
 import SongSearch from '@/components/room/SongSearch';
 import SongPlayer from '@/components/room/SongPlayer';
 import SongQueueTabs from '@/components/room/SongQueueTabs';
-import type { Song, QueueSong, SearchResult, PlayerState, HistorySong, RoomSession, ChatMessage, Room as RoomType } from '@/types/room';
+import type {
+  Song,
+  QueueSong,
+  SearchResult,
+  PlayerState,
+  HistorySong,
+  RoomSession,
+  ChatMessage,
+  Room as RoomType,
+} from '@/types/room';
 import { roomsService } from '@/services/rooms';
 import { spotifyService } from '@/services/spotify';
 import { useAuthStore } from '@/stores/auth';
@@ -72,7 +81,8 @@ const MOCK_SESSIONS: RoomSession[] = [
         id: '20',
         name: 'Shape of You',
         artist: 'Ed Sheeran',
-        albumCover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
+        albumCover:
+          'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
         duration: 234,
         playedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 - 1000 * 60 * 30),
         addedBy: 'user1',
@@ -81,7 +91,8 @@ const MOCK_SESSIONS: RoomSession[] = [
         id: '21',
         name: 'Uptown Funk',
         artist: 'Bruno Mars',
-        albumCover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop',
+        albumCover:
+          'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop',
         duration: 270,
         playedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 - 1000 * 60 * 25),
         addedBy: 'user2',
@@ -90,7 +101,8 @@ const MOCK_SESSIONS: RoomSession[] = [
         id: '22',
         name: "Can't Stop the Feeling",
         artist: 'Justin Timberlake',
-        albumCover: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=300&h=300&fit=crop',
+        albumCover:
+          'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=300&h=300&fit=crop',
         duration: 237,
         playedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 - 1000 * 60 * 20),
         addedBy: 'user3',
@@ -105,7 +117,8 @@ const MOCK_SESSIONS: RoomSession[] = [
         id: '30',
         name: 'Believer',
         artist: 'Imagine Dragons',
-        albumCover: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&h=300&fit=crop',
+        albumCover:
+          'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&h=300&fit=crop',
         duration: 204,
         playedAt: new Date(Date.now() - 1000 * 60 * 60 * 48 - 1000 * 60 * 15),
         addedBy: 'user1',
@@ -114,7 +127,8 @@ const MOCK_SESSIONS: RoomSession[] = [
         id: '31',
         name: 'Thunder',
         artist: 'Imagine Dragons',
-        albumCover: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&h=300&fit=crop',
+        albumCover:
+          'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&h=300&fit=crop',
         duration: 187,
         playedAt: new Date(Date.now() - 1000 * 60 * 60 * 48 - 1000 * 60 * 10),
         addedBy: 'user2',
@@ -129,7 +143,8 @@ const MOCK_SESSIONS: RoomSession[] = [
         id: '40',
         name: 'Photograph',
         artist: 'Ed Sheeran',
-        albumCover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
+        albumCover:
+          'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
         duration: 258,
         playedAt: new Date(Date.now() - 1000 * 60 * 60 * 72 - 1000 * 60 * 10),
         addedBy: 'user4',
@@ -143,21 +158,21 @@ const MOCK_CHAT_MESSAGES: ChatMessage[] = [
     id: 'msg-1',
     userId: 'user1',
     userName: 'Carlos',
-    message: '¡Qué buena canción! 🎵',
+    message: 'What a great song! 🎵',
     timestamp: new Date(Date.now() - 1000 * 60 * 10),
   },
   {
     id: 'msg-2',
     userId: 'user2',
-    userName: 'María',
-    message: 'Alguien puede poner algo de rock?',
+    userName: 'Maria',
+    message: 'Can someone play some rock?',
     timestamp: new Date(Date.now() - 1000 * 60 * 8),
   },
   {
     id: 'msg-3',
     userId: 'user3',
     userName: 'Pablo',
-    message: 'Yo añado una ahora mismo',
+    message: "I'll add one right now",
     timestamp: new Date(Date.now() - 1000 * 60 * 5),
   },
 ];
@@ -205,14 +220,14 @@ const Room = () => {
             const updatedRoom = await roomsService.joinRoom(roomCode, user.spotify_id);
             setRoom(updatedRoom);
           } catch (joinErr) {
-            setError(joinErr instanceof Error ? joinErr.message : 'Error al unirse a la sala');
+            setError(joinErr instanceof Error ? joinErr.message : 'Error joining the room');
             console.error('Error joining room:', joinErr);
           } finally {
             setIsJoining(false);
           }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error al cargar la sala');
+        setError(err instanceof Error ? err.message : 'Error loading room');
         console.error('Error loading room:', err);
       } finally {
         setIsLoading(false);
@@ -220,7 +235,7 @@ const Room = () => {
     };
 
     if (!user) {
-      setError('Debes iniciar sesión para acceder a una sala');
+      setError('You must log in to access a room');
       setIsLoading(false);
       return;
     }
@@ -232,27 +247,27 @@ const Room = () => {
 
   const handleLeaveRoom = async () => {
     if (!user?.spotify_id) {
-      setError('Debes iniciar sesión para salir de la sala');
+      setError('You must log in to leave the room');
       return;
     }
 
     if (!roomCode) return;
 
-    const confirmLeave = window.confirm('¿Estás seguro de que quieres salir de esta sala?');
+    const confirmLeave = window.confirm('Are you sure you want to leave this room?');
     if (!confirmLeave) return;
 
     try {
       await roomsService.leaveRoom(roomCode, user.spotify_id);
       navigate(ROUTES.ROOMS);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al salir de la sala');
+      setError(err instanceof Error ? err.message : 'Error leaving room');
       console.error('Error leaving room:', err);
     }
   };
 
   const handleCloseRoom = async () => {
     if (!user?.spotify_id) {
-      setError('Debes iniciar sesión para cerrar la sala');
+      setError('You must log in to close the room');
       return;
     }
 
@@ -262,12 +277,12 @@ const Room = () => {
     const userIsHost = checkIsHost(room, user.id);
 
     if (!userIsHost) {
-      setError('Solo el host puede cerrar la sala');
+      setError('Only the host can close the room');
       return;
     }
 
     const confirmClose = window.confirm(
-      '¿Estás seguro de que quieres cerrar esta sala? Todos los miembros serán desconectados.'
+      'Are you sure you want to close this room? All members will be disconnected.'
     );
     if (!confirmClose) return;
 
@@ -275,7 +290,7 @@ const Room = () => {
       await roomsService.closeRoom(roomCode, user.spotify_id);
       navigate(ROUTES.ROOMS);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cerrar la sala');
+      setError(err instanceof Error ? err.message : 'Error closing room');
       console.error('Error closing room:', err);
     }
   };
@@ -285,10 +300,10 @@ const Room = () => {
     if (!roomData || !userId) return false;
 
     // First try with host_id (user UUID)
-    if (roomData.room.host_id === userId) return true;
+    if (roomData.host_id === userId) return true;
 
     // If host object exists, compare with spotify_id
-    if (roomData.room.host?.spotify_id === user?.spotify_id) return true;
+    if (roomData.host?.spotify_id === user?.spotify_id) return true;
 
     return false;
   };
@@ -315,7 +330,7 @@ const Room = () => {
       const results = await spotifyService.searchTracks(query);
       setSearchResults(results);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al buscar canciones');
+      setError(err instanceof Error ? err.message : 'Error searching songs');
       console.error('Error searching songs:', err);
       setSearchResults([]);
     } finally {
@@ -337,7 +352,7 @@ const Room = () => {
     const newMessage: ChatMessage = {
       id: `msg-${Date.now()}`,
       userId: 'currentUser',
-      userName: 'Tú',
+      userName: 'You',
       message,
       timestamp: new Date(),
     };
@@ -347,8 +362,8 @@ const Room = () => {
   if (isLoading) {
     return (
       <Layout>
-        <div className="flex h-[calc(100vh-56.5px)] items-center justify-center">
-          <div className="text-text-secondary">Cargando sala...</div>
+        <div className='flex h-[calc(100vh-56.5px)] items-center justify-center'>
+          <div className='text-text-secondary'>Loading room...</div>
         </div>
       </Layout>
     );
@@ -357,13 +372,13 @@ const Room = () => {
   if (error && !room) {
     return (
       <Layout>
-        <div className="flex h-[calc(100vh-56.5px)] flex-col items-center justify-center gap-4">
-          <div className="text-red-500">{error}</div>
+        <div className='flex h-[calc(100vh-56.5px)] flex-col items-center justify-center gap-4'>
+          <div className='text-red-500'>{error}</div>
           <button
             onClick={() => navigate(ROUTES.ROOMS)}
-            className="rounded-xl bg-primary px-6 py-2 text-gray-900 hover:bg-primary/90 transition"
+            className='bg-primary hover:bg-primary/90 rounded-xl px-6 py-2 text-gray-900 transition'
           >
-            Volver a salas
+            Back to rooms
           </button>
         </div>
       </Layout>
@@ -373,8 +388,8 @@ const Room = () => {
   if (isJoining) {
     return (
       <Layout>
-        <div className="flex h-[calc(100vh-56.5px)] items-center justify-center">
-          <div className="text-text-secondary">Uniéndose a la sala...</div>
+        <div className='flex h-[calc(100vh-56.5px)] items-center justify-center'>
+          <div className='text-text-secondary'>Joining the room...</div>
         </div>
       </Layout>
     );
@@ -382,44 +397,44 @@ const Room = () => {
 
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-56.5px)] flex-col py-4">
+      <div className='flex h-[calc(100vh-56.5px)] flex-col py-4'>
         {/* Room header with controls */}
-        <div className="px-6 md:px-12 xl:px-6 pb-4">
-          <div className="flex items-center justify-between">
+        <div className='px-6 pb-4 md:px-12 xl:px-6'>
+          <div className='flex items-center justify-between'>
             <div>
-              <h1 className="text-2xl font-bold text-text-primary">{room?.room.name}</h1>
-              <p className="text-sm text-text-secondary">
-                {room?.members?.length || 0} {room?.members?.length === 1 ? 'miembro' : 'miembros'}
-                {isHost && <span className="ml-2 text-primary">(Host)</span>}
+              <h1 className='text-text-primary text-2xl font-bold'>{room?.name}</h1>
+              <p className='text-text-secondary text-sm'>
+                {room?.members?.length || 0} {room?.members?.length === 1 ? 'member' : 'members'}
+                {isHost && <span className='text-primary ml-2'>(Host)</span>}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className='flex gap-2'>
               <button
                 onClick={handleLeaveRoom}
-                className="rounded-xl border border-border bg-transparent px-4 py-2 text-sm font-medium text-text-primary transition hover:bg-surface-hover"
+                className='border-border text-text-primary hover:bg-surface-hover rounded-xl border bg-transparent px-4 py-2 text-sm font-medium transition'
               >
-                Salir
+                Leave
               </button>
               {isHost && (
                 <button
                   onClick={handleCloseRoom}
-                  className="rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600"
+                  className='rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600'
                 >
-                  Cerrar sala
+                  Close room
                 </button>
               )}
             </div>
           </div>
           {error && (
-            <div className="mt-4 rounded-xl bg-red-500/10 border border-red-500/20 p-3 text-red-500 text-sm">
+            <div className='mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-500'>
               {error}
             </div>
           )}
         </div>
 
-        <div className="flex h-full w-full flex-col gap-4 px-6 md:px-12 xl:px-6 lg:flex-row">
+        <div className='flex h-full w-full flex-col gap-4 px-6 md:px-12 lg:flex-row xl:px-6'>
           {/* Left column: Search and Player */}
-          <div className="flex flex-1 flex-col gap-4" style={{ flex: '3' }}>
+          <div className='flex flex-1 flex-col gap-4' style={{ flex: '3' }}>
             {/* Search bar at top */}
             <SongSearch
               searchResults={searchResults}
@@ -429,7 +444,7 @@ const Room = () => {
             />
 
             {/* Player at bottom */}
-            <div className="flex flex-1">
+            <div className='flex flex-1'>
               <SongPlayer
                 currentSong={MOCK_CURRENT_SONG}
                 playerState={playerState}
@@ -440,7 +455,7 @@ const Room = () => {
           </div>
 
           {/* Right column: Song queue */}
-          <div className="flex">
+          <div className='flex'>
             <SongQueueTabs
               queue={queue}
               recentSongs={MOCK_RECENT_SONGS}
@@ -456,4 +471,3 @@ const Room = () => {
 };
 
 export default Room;
-

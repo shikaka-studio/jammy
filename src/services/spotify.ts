@@ -23,9 +23,9 @@ interface SpotifySearchResponse {
 export const spotifyService = {
   async searchTracks(query: string): Promise<SearchResult[]> {
     const token = getSpotifyToken();
-    
+
     if (!token) {
-      throw new Error('No hay token de Spotify disponible');
+      throw new Error('No Spotify token available');
     }
 
     if (!query || query.trim().length === 0) {
@@ -44,9 +44,9 @@ export const spotifyService = {
 
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error('Token de Spotify expirado. Por favor, vuelve a iniciar sesión');
+          throw new Error('Spotify token expired. Please log in again');
         }
-        throw new Error('Error al buscar canciones en Spotify');
+        throw new Error('Error searching songs on Spotify');
       }
 
       const data: SpotifySearchResponse = await response.json();

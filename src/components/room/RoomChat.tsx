@@ -24,10 +24,10 @@ const SendIcon = () => (
 );
 
 /**
- * Formatea la hora de un mensaje para mostrar en el chat
+ * Formats the time of a message to display in the chat
  */
 const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString('es-ES', {
+    return date.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
     });

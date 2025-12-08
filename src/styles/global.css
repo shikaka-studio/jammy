@@ -4,6 +4,7 @@
 @theme {
   /* Primary brand colors */
   --color-primary: #1ed760;
+  --color-primary-dark: #1bc156;
   --color-secondary: #028090;
   --color-terciary: #e9c46a;
   --color-accent: #e9c46a;
@@ -14,6 +15,7 @@
   --color-background-elevated-2: #2d243c;
   --color-background-elevated-3: #332947;
   --color-background-elevated-4: #3b3152;
+  --color-background-elevated-5: #403551;
   --color-background-overlay: #332947;
   --color-background-light: #5a496e;
   --color-background-content: #0f0a1f;
