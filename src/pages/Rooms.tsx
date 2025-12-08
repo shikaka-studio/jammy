@@ -1,10 +1,11 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, RefObject } from 'react';
 import BaseLayout from '@/components/layout/BaseLayout';
 import Container from '@/ui/Container';
 import RoomsHeader from '@/components/rooms/RoomsHeader';
 import RoomFilters from '@/components/rooms/RoomFilters';
 import RoomGrid from '@/components/rooms/RoomGrid';
 import CreateRoomModal from '@/components/rooms/CreateRoomModal';
+import useModal from '@/hooks/useModal';
 import type { Room, RoomFilter, CreateRoomFormData } from '@/types/room';
 import { roomsService } from '@/services/rooms';
 import { useAuthStore } from '@/stores/auth';
@@ -47,11 +48,10 @@ const filterRooms = (rooms: Room[], filter: RoomFilter): Room[] => {
 
 const Rooms = () => {
   const [activeFilter, setActiveFilter] = useState<RoomFilter>({ type: 'all' });
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const { modalRef, isOpen, openModal, closeModal } = useModal();
   const { user } = useAuthStore();
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const Rooms = () => {
       setError(null);
       const newRoom = await roomsService.createRoom(data.name, user.spotify_id);
       setRooms((prev) => [newRoom, ...prev]);
-      setIsCreateModalOpen(false);
+      closeModal();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error creating room');
       console.error('Error creating room:', err);
@@ -99,7 +99,7 @@ const Rooms = () => {
       setError('You must log in to create a room');
       return;
     }
-    setIsCreateModalOpen(true);
+    openModal();
   };
 
   return (
@@ -108,17 +108,17 @@ const Rooms = () => {
         <div className='space-y-8 py-12'>
           <RoomsHeader onCreateRoom={handleCreateRoomClick} />
 
-          {error && (
-            <div className='rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-500'>
-              {error}
-            </div>
-          )}
-
           <RoomFilters
             activeFilter={activeFilter}
             availableTags={availableTags}
             onFilterChange={setActiveFilter}
           />
+
+          {error && (
+            <div className='rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-500'>
+              {error}
+            </div>
+          )}
 
           {isLoading ? (
             <div className='flex items-center justify-center py-20'>
@@ -128,12 +128,6 @@ const Rooms = () => {
             <div className='flex items-center justify-center py-20'>
               <div className='space-y-2 text-center'>
                 <p className='text-text-secondary'>No rooms available</p>
-                <button
-                  onClick={() => setIsCreateModalOpen(true)}
-                  className='text-primary hover:text-primary/80 transition'
-                >
-                  Create the first room
-                </button>
               </div>
             </div>
           ) : (
@@ -143,9 +137,10 @@ const Rooms = () => {
       </Container>
 
       <CreateRoomModal
-        isOpen={isCreateModalOpen}
+        modalRef={modalRef as RefObject<HTMLDivElement>}
+        isOpen={isOpen}
         onClose={() => {
-          setIsCreateModalOpen(false);
+          closeModal();
           setError(null);
         }}
         onSubmit={handleCreateRoom}

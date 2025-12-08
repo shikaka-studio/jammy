@@ -10,11 +10,11 @@ export const BUTTON_SIZE_CLASSES: Record<ButtonSize, string> = {
 
 export const VARIANT_CLASSES: Record<ButtonVariant, { bg: string; text: string }> = {
   primary: {
-    bg: 'bg-primary',
+    bg: 'bg-primary hover:bg-primary-dark transition-colors',
     text: 'text-gray-900',
   },
   secondary: {
-    bg: 'bg-primary/10 border border-gray-700',
+    bg: 'bg-background/60 hover:bg-background/80 border border-background-elevated-4 transition-colors',
     text: 'text-white',
   },
 };
