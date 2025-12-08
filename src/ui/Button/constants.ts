@@ -21,7 +21,7 @@ export const VARIANT_CLASSES: Record<ButtonVariant, { bg: string; text: string }
 
 export const BORDER_RADIUS_CLASSES = {
   rounded: 'rounded-full',
-  default: 'rounded-xl',
+  default: 'rounded-lg',
 };
 
 export const FULL_CLASSES = 'w-full';
