@@ -1,14 +1,12 @@
 import type { QueueSong } from '@/types/room';
+import { createImageErrorHandler } from '@/utils/image';
 
 interface QueueItemProps {
   song: QueueSong;
 }
 
 const QueueItem = ({ song }: QueueItemProps) => {
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const target = e.currentTarget;
-    target.src = `https://via.placeholder.com/48/231a30/ffffff?text=${encodeURIComponent(song.name.substring(0, 2))}`;
-  };
+  const handleImageError = createImageErrorHandler(song.name.substring(0, 2), '48x48');
 
   return (
     <div className="flex items-center gap-3 rounded-lg p-2 transition hover:bg-surface-hover">

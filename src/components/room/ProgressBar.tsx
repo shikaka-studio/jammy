@@ -1,17 +1,10 @@
+import { formatTime } from '@/utils/format';
+
 interface ProgressBarProps {
   currentTime: number;
   duration: number;
   onSeek?: (time: number) => void;
 }
-
-/**
- * Formats seconds to mm:ss format
- */
-const formatTime = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
-};
 
 const ProgressBar = ({ currentTime, duration, onSeek }: ProgressBarProps) => {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;

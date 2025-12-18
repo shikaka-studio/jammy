@@ -1,6 +1,7 @@
 import type { Song, PlayerState } from '@/types/room';
 import ProgressBar from './ProgressBar';
 import PlayerControls from './PlayerControls';
+import { createImageErrorHandler } from '@/utils/image';
 
 interface SongPlayerProps {
   currentSong: Song | null;
@@ -23,10 +24,7 @@ const SongPlayer = ({
     );
   }
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const target = e.currentTarget;
-    target.src = `https://via.placeholder.com/300/231a30/ffffff?text=${encodeURIComponent(currentSong.name)}`;
-  };
+  const handleImageError = createImageErrorHandler(currentSong.name);
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center rounded-2xl bg-background-elevated p-12">

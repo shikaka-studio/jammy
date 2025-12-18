@@ -1,5 +1,6 @@
 import type { SearchResult } from '@/types/room';
 import { ROOM_TEXTS } from '@/constants/room';
+import { createImageErrorHandler } from '@/utils/image';
 
 interface SearchResultItemProps {
   song: SearchResult;
@@ -7,10 +8,7 @@ interface SearchResultItemProps {
 }
 
 const SearchResultItem = ({ song, onAdd }: SearchResultItemProps) => {
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const target = e.currentTarget;
-    target.src = `https://via.placeholder.com/48/231a30/ffffff?text=${encodeURIComponent(song.name.substring(0, 2))}`;
-  };
+  const handleImageError = createImageErrorHandler(song.name.substring(0, 2), '48x48');
 
   return (
     <div className="flex items-center gap-3 rounded-lg p-3 transition hover:bg-surface-hover">
