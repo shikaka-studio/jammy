@@ -45,5 +45,15 @@ export const authService = {
     }
   },
 
-  // TODO: Refresh token?
+  async refreshSpotifyToken(): Promise<string> {
+    try {
+      const response = await apiClient.post<{ message: string; access_token: string }>(
+        API_ENDPOINTS.AUTH.REFRESH
+      );
+      return response.data.access_token;
+    } catch (error) {
+      console.error('Failed to refresh Spotify token:', error);
+      throw new Error('Failed to refresh Spotify token');
+    }
+  },
 };

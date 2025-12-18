@@ -1,5 +1,7 @@
-import { getSpotifyToken } from '@/utils/auth';
+import { getSpotifyToken, setSpotifyToken as saveSpotifyToken } from '@/utils/auth';
 import type { SearchResult } from '@/types/room';
+import { authService } from './auth';
+import { useAuthStore } from '@/stores/auth';
 
 const SPOTIFY_API_BASE = 'https://api.spotify.com/v1';
 
@@ -20,32 +22,60 @@ interface SpotifySearchResponse {
   };
 }
 
+/**
+ * Makes a Spotify API request with automatic token refresh on 401
+ */
+const fetchWithTokenRefresh = async (url: string, options: RequestInit = {}): Promise<Response> => {
+  let token = getSpotifyToken();
+
+  if (!token) {
+    throw new Error('No Spotify token available');
+  }
+
+  // Make initial request
+  let response = await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  // If token expired, refresh and retry once
+  if (response.status === 401) {
+    try {
+      const newToken = await authService.refreshSpotifyToken();
+      saveSpotifyToken(newToken);
+      useAuthStore.getState().setSpotifyToken(newToken);
+
+      // Retry request with new token
+      response = await fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${newToken}`,
+        },
+      });
+    } catch (refreshError) {
+      console.error('Failed to refresh Spotify token:', refreshError);
+      throw new Error('Spotify token expired. Please log in again');
+    }
+  }
+
+  return response;
+};
+
 export const spotifyService = {
   async searchTracks(query: string): Promise<SearchResult[]> {
-    const token = getSpotifyToken();
-
-    if (!token) {
-      throw new Error('No Spotify token available');
-    }
-
     if (!query || query.trim().length === 0) {
       return [];
     }
 
     try {
-      const response = await fetch(
-        `${SPOTIFY_API_BASE}/search?q=${encodeURIComponent(query)}&type=track&limit=10`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const url = `${SPOTIFY_API_BASE}/search?q=${encodeURIComponent(query)}&type=track&limit=10`;
+      const response = await fetchWithTokenRefresh(url);
 
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error('Spotify token expired. Please log in again');
-        }
         throw new Error('Error searching songs on Spotify');
       }
 

@@ -9,6 +9,7 @@ export const API_ENDPOINTS = {
     CALLBACK: '/callback',
     ME: '/auth/me',
     LOGOUT: '/auth/logout',
+    REFRESH: '/auth/refresh',
   },
   ROOMS: {
     LIST: '/rooms',

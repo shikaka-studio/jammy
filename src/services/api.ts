@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig } from 'axios';
-import { getToken, removeToken } from '@/utils/auth';
+import { getToken, clearAuth } from '@/utils/auth';
 import { API_URL } from '@/constants/api';
 
 const apiClient: AxiosInstance = axios.create({
@@ -31,12 +31,9 @@ apiClient.interceptors.response.use(
   (error: AxiosError) => {
     const { status, data } = error.response ?? {};
 
-    // 401 means token is invalid or expired - clear auth and redirect to login
+    // 401 means token is invalid or expired
     if (status === 401) {
-      removeToken();
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
-      }
+      clearAuth();
     }
 
     // 403 means user doesn't have permission
