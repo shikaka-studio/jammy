@@ -225,42 +225,40 @@ const Room = () => {
 
   return (
     <BaseLayout>
-      <div className='flex h-[calc(100dvh-61px)] flex-col py-4'>
+      <div className='flex h-[calc(100dvh-61px)] flex-col gap-4 p-6'>
         {/* Room header with controls */}
-        <div className='px-6 pb-4 md:px-12 xl:px-6'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <h1 className='text-text-primary text-2xl font-bold'>{room?.name}</h1>
-              <p className='text-text-secondary text-sm'>
-                {room?.members?.length || 0} {room?.members?.length === 1 ? 'member' : 'members'}
-                {isHost && <span className='text-primary ml-2'>(Host)</span>}
-              </p>
-            </div>
-            <div className='flex gap-2'>
-              <button
-                onClick={handleLeaveRoom}
-                className='border-border text-text-primary hover:bg-surface-hover rounded-xl border bg-transparent px-4 py-2 text-sm font-medium transition'
-              >
-                Leave
-              </button>
-              {isHost && (
-                <button
-                  onClick={handleCloseRoom}
-                  className='rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600'
-                >
-                  Close room
-                </button>
-              )}
-            </div>
+        <div className='flex items-center justify-between'>
+          <div>
+            <h1 className='text-text-primary text-2xl font-bold'>{room?.name}</h1>
+            <p className='text-text-secondary text-sm'>
+              {room?.members?.length || 0} {room?.members?.length === 1 ? 'member' : 'members'}
+              {isHost && <span className='text-primary ml-2'>(Host)</span>}
+            </p>
           </div>
-          {error && (
-            <div className='mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-500'>
-              {error}
-            </div>
-          )}
+          <div className='flex gap-2'>
+            <button
+              onClick={handleLeaveRoom}
+              className='border-border text-text-primary hover:bg-surface-hover rounded-xl border bg-transparent px-4 py-2 text-sm font-medium transition'
+            >
+              Leave
+            </button>
+            {isHost && (
+              <button
+                onClick={handleCloseRoom}
+                className='rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600'
+              >
+                Close room
+              </button>
+            )}
+          </div>
         </div>
+        {error && (
+          <div className='mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-500'>
+            {error}
+          </div>
+        )}
 
-        <div className='flex h-full w-full flex-col gap-4 px-6 md:px-12 lg:flex-row xl:px-6'>
+        <div className='flex h-full w-full flex-col gap-4 lg:flex-row'>
           {/* Left column: Search and Player */}
           <div className='flex flex-1 flex-col gap-4' style={{ flex: '3' }}>
             {/* Search bar at top */}
