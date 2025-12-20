@@ -1,9 +1,12 @@
 export interface Song {
   id: string;
-  name: string;
+  title: string;
   artist: string;
-  albumCover: string;
-  duration: number;
+  album: string;
+  album_art_url: string;
+  duration_ms: number;
+  spotify_id: string;
+  spotify_uri: string;
 }
 
 export interface QueueSong extends Song {
@@ -12,9 +15,7 @@ export interface QueueSong extends Song {
   addedBy: string;
 }
 
-export interface SearchResult extends Song {
-  album: string;
-}
+export interface SearchResult extends Song {}
 
 export interface PlayerState {
   currentTime: number;
@@ -32,38 +33,32 @@ export interface RoomUser {
   access_token: string;
   display_name: string;
   refresh_token: string;
+  token_expires_at: string | null;
   profile_image_url?: string;
 }
 
 export interface RoomMember {
   id: string;
-  room_id: string;
-  user_id: string;
-  joined_at: string;
-  users: RoomUser;
-}
-
-export interface RoomHost {
-  id?: string;
-  spotify_id?: string;
-  display_name?: string;
+  spotify_id: string;
+  display_name: string;
   profile_image_url?: string;
 }
 
 export interface Room {
   id: string;
   name: string;
-  room_code: string;
-  host_id: string | null;
+  code: string;
+  host_id: string;
   is_active: boolean;
-  current_track_uri: string | null;
-  current_position_ms: number;
+  current_track_uri?: string | null;
+  current_position_ms?: number;
+  current_song_start?: string | null;
+  paused_position_ms?: number | null;
   created_at: string;
   updated_at: string;
   description?: string | null;
   tags?: string[] | null;
-  cover_image?: string | null;
-  host?: RoomHost | null;
+  cover_image_url?: string | null;
   members?: RoomMember[];
 }
 
@@ -78,16 +73,35 @@ export interface CreateRoomFormData {
   name: string;
   tags: string[];
   description: string;
-  coverImage: File | null;
+  coverImageUrl: string;
 }
 
 export interface CreateRoomRequest {
   name: string;
   host_spotify_id: string;
+  description: string;
+  cover_image_url: string;
+  tags: string[];
+}
+
+export interface UploadImageResponse {
+  url: string;
 }
 
 export interface JoinRoomRequest {
-  room_code: string;
+  code: string;
+  user_spotify_id: string;
+}
+
+export interface AddSongRequest {
+  code: string;
+  spotify_track_id: string;
+  title: string;
+  artist: string;
+  album: string;
+  album_art_url: string;
+  spotify_uri: string;
+  duration_ms: number;
   user_spotify_id: string;
 }
 

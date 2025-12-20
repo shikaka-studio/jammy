@@ -1,32 +1,33 @@
 import { Link } from 'react-router';
-import { Users } from 'lucide-react';
+import { Users, Music } from 'lucide-react';
 import type { Room } from '@/types/room';
 import { ROUTES } from '@/constants/routes';
 import { ROOMS_PAGE_TEXTS } from '@/constants/room';
-import { createImageErrorHandler, createPlaceholderImage } from '@/utils/image';
 
 interface RoomCardProps {
   room: Room;
 }
 
 const RoomCard = ({ room }: RoomCardProps) => {
-  const handleImageError = createImageErrorHandler(room.name.substring(0, 2), '400x400');
-
   const usersCount = room.members?.length || 0;
-  const defaultCoverImage = createPlaceholderImage(room.name.substring(0, 2), '400x400');
 
   return (
     <Link
-      to={ROUTES.ROOM(room.room_code)}
+      to={ROUTES.ROOM(room.code)}
       className='group bg-background-elevated hover:bg-surface-hover block rounded-2xl p-4 transition'
     >
       <div className='aspect-square overflow-hidden rounded-xl'>
-        <img
-          src={room.cover_image || defaultCoverImage}
-          alt={room.name}
-          className='h-full w-full object-cover transition group-hover:scale-105'
-          onError={handleImageError}
-        />
+        {room.cover_image_url ? (
+          <img
+            src={room.cover_image_url}
+            alt={room.name}
+            className='h-full w-full object-cover transition group-hover:scale-105'
+          />
+        ) : (
+          <div className='flex h-full w-full items-center justify-center bg-linear-to-br from-purple-900 to-pink-900'>
+            <Music className='h-24 w-24 text-white' strokeWidth={1.5} />
+          </div>
+        )}
       </div>
       <div className='mt-4 space-y-1'>
         <h3 className='text-text-primary truncate text-base font-semibold'>{room.name}</h3>

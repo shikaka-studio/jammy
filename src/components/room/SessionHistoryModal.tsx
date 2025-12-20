@@ -3,6 +3,7 @@ import Modal from '@/ui/Modal';
 import type { RoomSession, HistorySong } from '@/types/room';
 import { HISTORY_MODAL } from '@/constants/room';
 import SpotifyIcon from '@/icons/SpotifyIcon';
+import { Music } from 'lucide-react';
 
 interface SessionHistoryModalProps {
   modalRef: RefObject<HTMLDivElement>;
@@ -96,16 +97,31 @@ interface SessionSongItemProps {
   song: HistorySong;
 }
 
-const SessionSongItem = ({ song }: SessionSongItemProps) => (
-  <div className='hover:bg-surface-hover flex items-center gap-3 rounded-lg p-2 transition'>
-    <img src={song.albumCover} alt={song.name} className='h-10 w-10 rounded object-cover' />
-    <div className='min-w-0 flex-1'>
-      <p className='text-text-primary truncate text-sm font-medium'>{song.name}</p>
-      <p className='text-text-secondary truncate text-xs'>{song.artist}</p>
+const SessionSongItem = ({ song }: SessionSongItemProps) => {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <div className='hover:bg-surface-hover flex items-center gap-3 rounded-lg p-2 transition'>
+      {song.album_art_url && !imageError ? (
+        <img
+          src={song.album_art_url}
+          alt={song.title}
+          className='h-10 w-10 rounded object-cover'
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <div className='flex h-10 w-10 items-center justify-center rounded bg-linear-to-br from-purple-900 to-pink-900'>
+          <Music className='h-5 w-5 text-white' strokeWidth={1.5} />
+        </div>
+      )}
+      <div className='min-w-0 flex-1'>
+        <p className='text-text-primary truncate text-sm font-medium'>{song.title}</p>
+        <p className='text-text-secondary truncate text-xs'>{song.artist}</p>
+      </div>
+      <span className='text-text-tertiary shrink-0 text-xs'>{formatPlayedTime(song.playedAt)}</span>
     </div>
-    <span className='text-text-tertiary shrink-0 text-xs'>{formatPlayedTime(song.playedAt)}</span>
-  </div>
-);
+  );
+};
 
 const SessionHistoryModal = ({ modalRef, isOpen, onClose, sessions }: SessionHistoryModalProps) => {
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);

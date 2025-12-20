@@ -7,11 +7,6 @@ import type { User } from '@/types/user';
 export const checkIsHost = (room: Room | null, user: User | null | undefined): boolean => {
   if (!room || !user) return false;
 
-  // First try with host_id (user UUID)
-  if (room.host_id === user.id) return true;
-
-  // If host object exists, compare with spotify_id
-  if (room.host?.spotify_id === user.spotify_id) return true;
-
-  return false;
+  // Check if user's ID matches the host_id
+  return room.host_id === user.id;
 };

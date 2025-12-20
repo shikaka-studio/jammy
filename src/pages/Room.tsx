@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import BaseLayout from '@/components/layout/BaseLayout';
 import SongSearch from '@/components/room/SongSearch';
@@ -10,19 +10,20 @@ import type {
   PlayerState,
   ChatMessage,
   Room as RoomType,
+  Song,
+  HistorySong,
 } from '@/types/room';
+import type { PlaybackState, QueueSongWS, Notification } from '@/types/websocket';
 import { roomsService } from '@/services/rooms';
+import { playbackService } from '@/services/playback';
 import { spotifyService } from '@/services/spotify';
+import { songsService } from '@/services/songs';
 import { useAuthStore } from '@/stores/auth';
+import { useRoomWebSocket } from '@/hooks/useRoomWebSocket';
 import { ROUTES } from '@/constants/routes';
-import {
-  MOCK_CURRENT_SONG,
-  MOCK_QUEUE,
-  MOCK_RECENT_SONGS,
-  MOCK_SESSIONS,
-  MOCK_CHAT_MESSAGES,
-} from '@/constants/mockData';
+import { MOCK_SESSIONS, MOCK_CHAT_MESSAGES } from '@/constants/mockData';
 import { checkIsHost } from '@/utils/room';
+import { convertTrackToSong, calculateCurrentPosition } from '@/utils/playback';
 
 const Room = () => {
   const { id: roomCode } = useParams<{ id: string }>();
@@ -33,16 +34,110 @@ const Room = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isJoining, setIsJoining] = useState(false);
+  const [currentSong, setCurrentSong] = useState<Song | null>(null);
   const [playerState, setPlayerState] = useState<PlayerState>({
-    currentTime: 140,
-    isPlaying: true,
+    currentTime: 0,
+    isPlaying: false,
     volume: 0.8,
   });
-  const [queue, setQueue] = useState<QueueSong[]>(MOCK_QUEUE);
+  const [playbackStartedAt, setPlaybackStartedAt] = useState<string | null>(null);
+  const [basePositionMs, setBasePositionMs] = useState(0);
+  const [queue, setQueue] = useState<QueueSong[]>([]);
+  const [recentSongs, setRecentSongs] = useState<HistorySong[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(MOCK_CHAT_MESSAGES);
+  const [notification, setNotification] = useState<Notification | null>(null);
   const isHost = checkIsHost(room, user);
+
+  // Handle playback state updates from WebSocket
+  const handlePlaybackUpdate = useCallback((playbackState: PlaybackState) => {
+    const song = convertTrackToSong(playbackState.current_track);
+    setCurrentSong(song);
+    setPlaybackStartedAt(playbackState.playback_started_at);
+    setBasePositionMs(playbackState.position_ms);
+
+    setPlayerState((prev) => ({
+      ...prev,
+      currentTime: Math.floor(playbackState.position_ms / 1000),
+      isPlaying: playbackState.is_playing,
+    }));
+  }, []);
+
+  // Update current time every second when playing
+  useEffect(() => {
+    if (!playerState.isPlaying) return;
+
+    const interval = setInterval(() => {
+      const currentPositionMs = calculateCurrentPosition(
+        playerState.isPlaying,
+        playbackStartedAt,
+        basePositionMs,
+        currentSong?.duration_ms
+      );
+      setPlayerState((prev) => ({
+        ...prev,
+        currentTime: Math.floor(currentPositionMs / 1000),
+      }));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [playerState.isPlaying, playbackStartedAt, basePositionMs, currentSong]);
+
+  // Handle queue updates from WebSocket
+  const handleQueueUpdate = useCallback((queueData: QueueSongWS[], recentlyPlayedData: QueueSongWS[]) => {
+    const convertedQueue: QueueSong[] = queueData.map((item) => ({
+      ...item,
+      song_id: item.id,
+      likes: 0,
+      dislikes: 0,
+      addedBy: item.added_by.display_name,
+    }));
+    setQueue(convertedQueue);
+
+    const convertedRecentSongs: HistorySong[] = recentlyPlayedData.map((item) => ({
+      ...item,
+      song_id: item.id,
+      playedAt: new Date(),
+      addedBy: item.added_by.display_name,
+    }));
+    setRecentSongs(convertedRecentSongs);
+  }, []);
+
+  // Handle member events
+  const handleMemberJoined = useCallback(
+    (userId: string, displayName: string, profileImageUrl: string, connectionCount: number) => {
+      console.log(`${displayName} joined the room (${connectionCount} connections)`);
+      // Optionally show a toast notification
+    },
+    []
+  );
+
+  const handleMemberLeft = useCallback(
+    (userId: string, displayName: string, profileImageUrl: string, connectionCount: number) => {
+      console.log(`${displayName} left the room (${connectionCount} connections)`);
+      // Optionally show a toast notification
+    },
+    []
+  );
+
+  // Handle notifications
+  const handleNotification = useCallback((notif: Notification) => {
+    setNotification(notif);
+    // Auto-clear notification after 5 seconds
+    setTimeout(() => setNotification(null), 5000);
+  }, []);
+
+  // WebSocket connection
+  useRoomWebSocket({
+    roomCode: roomCode || '',
+    userId: user?.id || '',
+    onPlaybackUpdate: handlePlaybackUpdate,
+    onQueueUpdate: handleQueueUpdate,
+    onMemberJoined: handleMemberJoined,
+    onMemberLeft: handleMemberLeft,
+    onNotification: handleNotification,
+  });
 
   useEffect(() => {
     const loadRoomDetails = async () => {
@@ -55,9 +150,7 @@ const Room = () => {
         setRoom(roomData);
 
         // Check if user is already a member
-        const isMember = roomData.members?.some(
-          (member) => member.users?.spotify_id === user?.spotify_id
-        );
+        const isMember = roomData.members?.some((member) => member.spotify_id === user?.spotify_id);
 
         // If not a member, join automatically
         if (!isMember && user?.spotify_id) {
@@ -71,6 +164,15 @@ const Room = () => {
           } finally {
             setIsJoining(false);
           }
+        }
+
+        // Fetch initial playback state
+        try {
+          const playbackState = await playbackService.getPlaybackState(roomCode);
+          handlePlaybackUpdate(playbackState);
+        } catch (playbackErr) {
+          console.log('No active playback state');
+          // It's okay if there's no playback state yet
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error loading room');
@@ -166,14 +268,31 @@ const Room = () => {
     }
   };
 
-  const handleAddSong = (song: SearchResult) => {
-    const newQueueSong: QueueSong = {
-      ...song,
-      likes: 0,
-      dislikes: 0,
-      addedBy: 'currentUser',
-    };
-    setQueue((prev) => [...prev, newQueueSong]);
+  const handleAddSong = async (song: SearchResult) => {
+    if (!roomCode || !user?.spotify_id) {
+      setError('Cannot add song: missing room or user information');
+      return;
+    }
+
+    const { spotify_id, title, artist, album, album_art_url, duration_ms, spotify_uri } = song;
+
+    try {
+      await songsService.addSongToQueue({
+        code: roomCode,
+        spotify_track_id: spotify_id,
+        title,
+        artist,
+        album,
+        album_art_url,
+        spotify_uri,
+        duration_ms,
+        user_spotify_id: user.spotify_id,
+      });
+      // Queue will be updated via WebSocket
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error adding song to queue');
+      console.error('Error adding song:', err);
+    }
   };
 
   const handleSendMessage = (message: string) => {
@@ -257,6 +376,19 @@ const Room = () => {
             {error}
           </div>
         )}
+        {notification && (
+          <div
+            className={`mt-4 rounded-xl border p-3 text-sm ${
+              notification.level === 'error'
+                ? 'border-red-500/20 bg-red-500/10 text-red-500'
+                : notification.level === 'warning'
+                  ? 'border-yellow-500/20 bg-yellow-500/10 text-yellow-500'
+                  : 'border-blue-500/20 bg-blue-500/10 text-blue-500'
+            }`}
+          >
+            {notification.message}
+          </div>
+        )}
 
         <div className='flex h-full w-full flex-col gap-4 lg:flex-row'>
           {/* Left column: Search and Player */}
@@ -272,7 +404,7 @@ const Room = () => {
             {/* Player at bottom */}
             <div className='flex flex-1'>
               <SongPlayer
-                currentSong={MOCK_CURRENT_SONG}
+                currentSong={currentSong}
                 playerState={playerState}
                 onTogglePlay={handleTogglePlay}
                 onSeek={handleSeek}
@@ -284,7 +416,7 @@ const Room = () => {
           <div className='flex'>
             <SongQueueTabs
               queue={queue}
-              recentSongs={MOCK_RECENT_SONGS}
+              recentSongs={recentSongs}
               sessions={MOCK_SESSIONS}
               messages={messages}
               onSendMessage={handleSendMessage}

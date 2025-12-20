@@ -83,11 +83,13 @@ export const spotifyService = {
 
       return data.tracks.items.map((track) => ({
         id: track.id,
-        name: track.name,
+        title: track.name,
         artist: track.artists.map((artist) => artist.name).join(', '),
         album: track.album.name,
-        albumCover: track.album.images[0]?.url || '',
-        duration: Math.floor(track.duration_ms / 1000),
+        album_art_url: track.album.images[0]?.url || '',
+        duration_ms: track.duration_ms,
+        spotify_id: track.id,
+        spotify_uri: `spotify:track:${track.id}`,
       }));
     } catch (error) {
       console.error('Error searching Spotify:', error);
@@ -95,4 +97,3 @@ export const spotifyService = {
     }
   },
 };
-

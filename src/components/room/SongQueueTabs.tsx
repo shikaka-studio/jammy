@@ -105,16 +105,7 @@ const SongQueueTabs = ({
     }
 
     return recentSongs.map((song) => (
-      <div
-        key={`${song.id}-${song.playedAt.getTime()}`}
-        className='hover:bg-surface-hover flex items-center gap-3 rounded-lg p-2 transition'
-      >
-        <img src={song.albumCover} alt={song.name} className='h-12 w-12 rounded-md object-cover' />
-        <div className='min-w-0 flex-1'>
-          <p className='text-text-primary truncate text-sm font-medium'>{song.name}</p>
-          <p className='text-text-secondary truncate text-xs'>{song.artist}</p>
-        </div>
-      </div>
+      <QueueItem key={`${song.id}-${song.playedAt.getTime()}`} song={song} />
     ));
   };
 
@@ -161,7 +152,7 @@ const SongQueueTabs = ({
         </div>
 
         {/* Content */}
-        <div className='hide-scrollbar flex-1 space-y-2 overflow-y-auto'>{renderContent()}</div>
+        <div className='flex-1 space-y-2 overflow-y-auto'>{renderContent()}</div>
       </div>
 
       <SessionHistoryModal

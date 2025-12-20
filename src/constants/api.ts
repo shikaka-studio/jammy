@@ -18,5 +18,12 @@ export const API_ENDPOINTS = {
     DETAILS: (roomCode: string) => `/rooms/${roomCode}`,
     LEAVE: (roomCode: string) => `/rooms/${roomCode}/leave`,
     CLOSE: (roomCode: string) => `/rooms/${roomCode}`,
+    UPLOAD_COVER: '/rooms/upload/cover',
+  },
+  PLAYBACK: {
+    STATE: (roomCode: string) => `/playback/room/${roomCode}/state`,
+  },
+  SONGS: {
+    ADD: '/songs/add',
   },
 } as const;

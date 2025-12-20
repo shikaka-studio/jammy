@@ -85,7 +85,7 @@ const Rooms = () => {
 
     try {
       setError(null);
-      const newRoom = await roomsService.createRoom(data.name, user.spotify_id);
+      const newRoom = await roomsService.createRoom(data, user.spotify_id);
       setRooms((prev) => [newRoom, ...prev]);
       closeModal();
     } catch (err) {
