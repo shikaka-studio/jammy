@@ -1,6 +1,6 @@
 import apiClient from './api';
 import { API_ENDPOINTS } from '@/constants/api';
-import type { AuthURLResponse, AuthCallbackResponse } from '@/types/auth';
+import type { AuthURLResponse } from '@/types/auth';
 import { User } from '@/types/user';
 
 export const authService = {
@@ -11,18 +11,6 @@ export const authService = {
     } catch (error) {
       console.error('Failed to get auth URL:', error);
       throw new Error('Failed to initialize Spotify login');
-    }
-  },
-
-  async handleCallback(code: string): Promise<AuthCallbackResponse> {
-    try {
-      const response = await apiClient.get<AuthCallbackResponse>(API_ENDPOINTS.AUTH.CALLBACK, {
-        params: { code },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Failed to handle callback:', error);
-      throw new Error('Failed to complete Spotify login');
     }
   },
 

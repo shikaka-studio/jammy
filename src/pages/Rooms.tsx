@@ -63,7 +63,6 @@ const Rooms = () => {
       setIsLoading(true);
       setError(null);
       const data = await roomsService.getRooms();
-      console.log(data);
       setRooms(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error loading rooms');

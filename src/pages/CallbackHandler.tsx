@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Loader2, AlertCircle, Check } from 'lucide-react';
+import Link from '@/ui/Link';
 import BaseLayout from '@/components/layout/BaseLayout';
 import { authService } from '@/services/auth';
 import { useAuthStore } from '@/stores/auth';
+import { ROUTES } from '@/constants/routes';
+import { API_URL } from '@/constants/api';
 import type { AuthCallbackStatus } from '@/types/auth';
 
 const CallbackHandler = () => {
   const [status, setStatus] = useState<AuthCallbackStatus>('loading');
   const [error, setError] = useState<string | null>(null);
   const { setUser, setToken } = useAuthStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -36,7 +41,7 @@ const CallbackHandler = () => {
         // Redirect to dashboard after brief delay
         // Delay allows user to see success message
         setTimeout(() => {
-          // TODO: Navigate to rooms page?
+          navigate(ROUTES.ROOMS);
         }, 1000);
       } catch (err) {
         console.error('Callback failed:', err);
@@ -49,10 +54,6 @@ const CallbackHandler = () => {
 
     handleCallback();
   }, []);
-
-  const handleRetry = () => {
-    // TODO: Login again
-  };
 
   // Loading state
   if (status === 'loading') {
@@ -94,12 +95,12 @@ const CallbackHandler = () => {
           <AlertCircle className='text-primary mx-auto mb-4 h-12 w-12' />
           <h2 className='mb-3 text-2xl font-bold'>Login Failed</h2>
           <p className='text-dark-400 mb-6'>{error}</p>
-          <button
-            onClick={handleRetry}
+          <Link
+            href={`${API_URL}/auth/login`}
             className='bg-primary relative inline-flex w-fit cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-full px-2.5 py-1.5 text-sm font-semibold text-gray-900'
           >
-            Try Again
-          </button>
+            Try again
+          </Link>
         </div>
       </main>
     </BaseLayout>
