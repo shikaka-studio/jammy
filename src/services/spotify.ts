@@ -96,4 +96,55 @@ export const spotifyService = {
       throw error;
     }
   },
+
+  async play(deviceId: string, spotifyUri?: string, positionMs: number = 0): Promise<void> {
+    const body: Record<string, unknown> = {
+      position_ms: positionMs,
+    };
+
+    if (spotifyUri) {
+      body.uris = [spotifyUri];
+    }
+
+    const response = await fetchWithTokenRefresh(
+      `${SPOTIFY_API_BASE}/me/player/play?device_id=${deviceId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to play: ${response.statusText}`);
+    }
+  },
+
+  async pause(deviceId: string): Promise<void> {
+    const response = await fetchWithTokenRefresh(
+      `${SPOTIFY_API_BASE}/me/player/pause?device_id=${deviceId}`,
+      {
+        method: 'PUT',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to pause: ${response.statusText}`);
+    }
+  },
+
+  async seek(deviceId: string, positionMs: number): Promise<void> {
+    const response = await fetchWithTokenRefresh(
+      `${SPOTIFY_API_BASE}/me/player/seek?position_ms=${positionMs}&device_id=${deviceId}`,
+      {
+        method: 'PUT',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to seek: ${response.statusText}`);
+    }
+  },
 };

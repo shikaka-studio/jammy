@@ -4,6 +4,16 @@ import BaseLayout from '@/components/layout/BaseLayout';
 import SongSearch from '@/components/room/SongSearch';
 import SongPlayer from '@/components/room/SongPlayer';
 import SongQueueTabs from '@/components/room/SongQueueTabs';
+import { useAuthStore } from '@/stores/auth';
+import { SpotifyPlayerProvider } from '@/contexts/SpotifyPlayerContext';
+import { useRoomWebSocket } from '@/hooks/useRoomWebSocket';
+import { useSpotifyPlayer } from '@/hooks/useSpotifyPlayer';
+import { roomsService } from '@/services/rooms';
+import { playbackService } from '@/services/playback';
+import { spotifyService } from '@/services/spotify';
+import { songsService } from '@/services/songs';
+import { checkIsHost } from '@/utils/room';
+import { convertTrackToSong, calculateCurrentPosition } from '@/utils/playback';
 import type {
   QueueSong,
   SearchResult,
@@ -14,18 +24,10 @@ import type {
   HistorySong,
 } from '@/types/room';
 import type { PlaybackState, QueueSongWS, Notification } from '@/types/websocket';
-import { roomsService } from '@/services/rooms';
-import { playbackService } from '@/services/playback';
-import { spotifyService } from '@/services/spotify';
-import { songsService } from '@/services/songs';
-import { useAuthStore } from '@/stores/auth';
-import { useRoomWebSocket } from '@/hooks/useRoomWebSocket';
 import { ROUTES } from '@/constants/routes';
 import { MOCK_SESSIONS, MOCK_CHAT_MESSAGES } from '@/constants/mockData';
-import { checkIsHost } from '@/utils/room';
-import { convertTrackToSong, calculateCurrentPosition } from '@/utils/playback';
 
-const Room = () => {
+const RoomContent = () => {
   const { id: roomCode } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
@@ -50,19 +52,37 @@ const Room = () => {
   const [notification, setNotification] = useState<Notification | null>(null);
   const isHost = checkIsHost(room, user);
 
-  // Handle playback state updates from WebSocket
-  const handlePlaybackUpdate = useCallback((playbackState: PlaybackState) => {
-    const song = convertTrackToSong(playbackState.current_track);
-    setCurrentSong(song);
-    setPlaybackStartedAt(playbackState.playback_started_at);
-    setBasePositionMs(playbackState.position_ms);
+  // Get Spotify player from context
+  const spotifyPlayer = useSpotifyPlayer();
 
-    setPlayerState((prev) => ({
-      ...prev,
-      currentTime: Math.floor(playbackState.position_ms / 1000),
-      isPlaying: playbackState.is_playing,
-    }));
-  }, []);
+  // Handle playback state updates from WebSocket
+  const handlePlaybackUpdate = useCallback(
+    (playbackState: PlaybackState) => {
+      const song = convertTrackToSong(playbackState.current_track);
+      setCurrentSong(song);
+      setPlaybackStartedAt(playbackState.playback_started_at);
+      setBasePositionMs(playbackState.position_ms);
+
+      setPlayerState((prev) => ({
+        ...prev,
+        currentTime: Math.floor(playbackState.position_ms / 1000),
+        isPlaying: playbackState.is_playing,
+      }));
+
+      // Control Spotify player based on WebSocket updates
+      if (!spotifyPlayer.isReady || !song) {
+        return;
+      }
+
+      if (playbackState.is_playing) {
+        spotifyPlayer.play(song.spotify_uri, playbackState.position_ms);
+        return;
+      }
+
+      spotifyPlayer.pause();
+    },
+    [spotifyPlayer]
+  );
 
   // Update current time every second when playing
   useEffect(() => {
@@ -85,24 +105,27 @@ const Room = () => {
   }, [playerState.isPlaying, playbackStartedAt, basePositionMs, currentSong]);
 
   // Handle queue updates from WebSocket
-  const handleQueueUpdate = useCallback((queueData: QueueSongWS[], recentlyPlayedData: QueueSongWS[]) => {
-    const convertedQueue: QueueSong[] = queueData.map((item) => ({
-      ...item,
-      song_id: item.id,
-      likes: 0,
-      dislikes: 0,
-      addedBy: item.added_by.display_name,
-    }));
-    setQueue(convertedQueue);
+  const handleQueueUpdate = useCallback(
+    (queueData: QueueSongWS[], recentlyPlayedData: QueueSongWS[]) => {
+      const convertedQueue: QueueSong[] = queueData.map((item) => ({
+        ...item,
+        song_id: item.id,
+        likes: 0,
+        dislikes: 0,
+        addedBy: item.added_by.display_name,
+      }));
+      setQueue(convertedQueue);
 
-    const convertedRecentSongs: HistorySong[] = recentlyPlayedData.map((item) => ({
-      ...item,
-      song_id: item.id,
-      playedAt: new Date(),
-      addedBy: item.added_by.display_name,
-    }));
-    setRecentSongs(convertedRecentSongs);
-  }, []);
+      const convertedRecentSongs: HistorySong[] = recentlyPlayedData.map((item) => ({
+        ...item,
+        song_id: item.id,
+        playedAt: new Date(),
+        addedBy: item.added_by.display_name,
+      }));
+      setRecentSongs(convertedRecentSongs);
+    },
+    []
+  );
 
   // Handle member events
   const handleMemberJoined = useCallback(
@@ -241,10 +264,21 @@ const Room = () => {
   };
 
   const handleTogglePlay = () => {
-    setPlayerState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
+    if (playerState.isPlaying) {
+      spotifyPlayer.pause();
+      setPlayerState((prev) => ({ ...prev, isPlaying: false }));
+      return;
+    }
+
+    // Resume playback at current position
+    if (currentSong) {
+      spotifyPlayer.play(currentSong.spotify_uri, playerState.currentTime * 1000);
+    }
+    setPlayerState((prev) => ({ ...prev, isPlaying: true }));
   };
 
   const handleSeek = (time: number) => {
+    spotifyPlayer.seek(time * 1000);
     setPlayerState((prev) => ({ ...prev, currentTime: time }));
   };
 
@@ -389,8 +423,18 @@ const Room = () => {
             {notification.message}
           </div>
         )}
+        {!spotifyPlayer.isReady && !spotifyPlayer.error && (
+          <div className='mt-4 rounded-xl border border-blue-500/20 bg-blue-500/10 p-3 text-sm text-blue-500'>
+            Initializing Spotify player...
+          </div>
+        )}
+        {spotifyPlayer.error && (
+          <div className='mt-4 rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-3 text-sm text-yellow-500'>
+            Spotify Player: {spotifyPlayer.error}
+          </div>
+        )}
 
-        <div className='flex min-h-0 flex-1 w-full flex-col gap-4 lg:flex-row'>
+        <div className='flex min-h-0 w-full flex-1 flex-col gap-4 lg:flex-row'>
           {/* Left column: Search and Player */}
           <div className='flex flex-1 flex-col gap-4' style={{ flex: '3' }}>
             {/* Search bar at top */}
@@ -425,6 +469,31 @@ const Room = () => {
         </div>
       </div>
     </BaseLayout>
+  );
+};
+
+// Wrapper component that provides Spotify Player context
+const Room = () => {
+  const [error, setError] = useState<string | null>(null);
+
+  const handlePlayerReady = (deviceId: string) => {
+    console.log('Spotify player ready with device ID:', deviceId);
+  };
+
+  const handlePlayerError = (err: Error) => {
+    console.error('Spotify player error:', err);
+    setError(err.message);
+  };
+
+  return (
+    <SpotifyPlayerProvider onPlayerReady={handlePlayerReady} onPlayerError={handlePlayerError}>
+      <RoomContent />
+      {error && (
+        <div className='fixed right-4 bottom-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-500'>
+          {error}
+        </div>
+      )}
+    </SpotifyPlayerProvider>
   );
 };
 
