@@ -1,16 +1,23 @@
+import { useNavigate } from 'react-router';
 import Button from '@/ui/Button';
 import Link from '@/ui/Link';
-import { useAuthStore } from '@/stores/auth';
 import SpotifyIcon from '@/icons/SpotifyIcon';
+import { useAuthStore } from '@/stores/auth';
 import { API_URL } from '@/constants/api';
+import { ROUTES } from '@/constants/routes';
 
 const HeaderUser = () => {
-  const { user } = useAuthStore();
-  const handleLogout = () => {};
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate(ROUTES.HOME);
+  };
 
   return user ? (
     <Button
-      className='flex items-center gap-3 rounded-full bg-white/10 px-3 py-2'
+      className='flex cursor-pointer items-center gap-3 rounded-full bg-white/10 px-3 py-2'
       onClick={handleLogout}
     >
       <img className='h-5 w-5 rounded-full' src={user.profile_image_url} alt='Rounded avatar' />

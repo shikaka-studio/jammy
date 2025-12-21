@@ -15,6 +15,7 @@ import useSongSearch from '@/hooks/room/useSongSearch';
 import type { QueueSong, ChatMessage, HistorySong } from '@/types/room';
 import type { QueueSongWS, Notification } from '@/types/websocket';
 import { MOCK_CHAT_MESSAGES } from '@/constants/mockData';
+import { SPOTIFY_PRODUCT_TYPES } from '@/constants/common';
 
 const RoomContent = () => {
   const [queue, setQueue] = useState<QueueSong[]>([]);
@@ -24,6 +25,8 @@ const RoomContent = () => {
   const { user } = useAuthStore();
   const spotifyPlayer = useSpotifyPlayer();
   const { addToast } = useToast();
+
+  const isUserPremium = user?.product === SPOTIFY_PRODUCT_TYPES.PREMIUM;
 
   const roomData = useRoomData({
     roomCode,
@@ -157,6 +160,8 @@ const RoomContent = () => {
                 playerState={playback.playerState}
                 onTogglePlay={playback.handleTogglePlay}
                 onSeek={playback.handleSeek}
+                isHost={roomData.isHost}
+                isPremium={isUserPremium}
               />
             </div>
           </div>
