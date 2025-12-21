@@ -135,7 +135,7 @@ const RoomContent = () => {
   // Main UI
   return (
     <BaseLayout>
-      <div className='flex h-[calc(100dvh-61px)] flex-col gap-4 overflow-hidden p-6'>
+      <div className='flex h-[calc(100dvh-61px)] flex-col gap-4 p-6 sm:overflow-hidden'>
         <RoomHeader
           roomName={roomData.room?.name}
           memberCount={roomData.room?.members?.length || 0}
@@ -144,7 +144,7 @@ const RoomContent = () => {
           onCloseRoom={roomData.closeRoom}
         />
 
-        <div className='flex min-h-0 w-full flex-1 flex-col gap-4 lg:flex-row'>
+        <div className='flex min-h-0 w-full flex-1 flex-col gap-4 sm:flex-row'>
           {/* Left column: Search and Player */}
           <div className='flex flex-1 flex-col gap-4' style={{ flex: '3' }}>
             <SongSearch

@@ -43,7 +43,7 @@ const SongPlayer = ({
         <img
           src={currentSong.album_art_url}
           alt={currentSong.title}
-          className='h-64 w-64 rounded-2xl object-cover shadow-xl'
+          className='aspect-square max-h-64 w-full max-w-64 rounded-2xl object-cover shadow-xl'
           onError={() => setImageError(true)}
         />
       ) : (

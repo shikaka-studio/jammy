@@ -113,7 +113,7 @@ const SongQueueTabs = ({
     <>
       <div
         ref={containerRef}
-        className='bg-background-elevated relative flex h-full flex-col rounded-2xl p-4'
+        className='bg-background-elevated relative flex max-h-[500px] min-h-[500px] flex-col rounded-2xl p-4 max-sm:w-full! max-sm:max-w-full! max-sm:min-w-full! sm:h-full sm:max-h-full'
         style={{ width: `${width}px`, minWidth: `${MIN_WIDTH}px`, maxWidth: `${MAX_WIDTH}px` }}
       >
         {/* Resize handle */}
@@ -152,7 +152,7 @@ const SongQueueTabs = ({
         </div>
 
         {/* Content */}
-        <div className='flex-1 space-y-2 overflow-y-auto min-h-0'>{renderContent()}</div>
+        <div className='min-h-0 flex-1 space-y-2 overflow-y-auto'>{renderContent()}</div>
       </div>
 
       <SessionHistoryModal
