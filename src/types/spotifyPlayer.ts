@@ -5,10 +5,7 @@ export interface SpotifyPlayer {
   seek: (positionMs: number) => Promise<void>;
   setVolume: (volume: number) => Promise<void>;
   getCurrentState: () => Promise<Spotify.PlaybackState | null>;
-  addListener(
-    event: 'ready' | 'not_ready',
-    callback: (data: { device_id: string }) => void
-  ): void;
+  addListener(event: 'ready' | 'not_ready', callback: (data: { device_id: string }) => void): void;
   addListener(
     event: 'player_state_changed',
     callback: (state: Spotify.PlaybackState | null) => void
@@ -17,10 +14,7 @@ export interface SpotifyPlayer {
     event: 'initialization_error' | 'authentication_error' | 'account_error' | 'playback_error',
     callback: (error: { message: string }) => void
   ): void;
-  removeListener: (
-    event: string,
-    callback?: (...args: unknown[]) => void
-  ) => void;
+  removeListener: (event: string, callback?: (...args: unknown[]) => void) => void;
   _options: {
     getOAuthToken: (callback: (token: string) => void) => void;
   };
@@ -36,7 +30,6 @@ export interface UseSpotifyPlayerReturn {
   isReady: boolean;
   deviceId: string | null;
   isPaused: boolean;
-  error: string | null;
   play: (spotifyUri?: string, positionMs?: number) => Promise<void>;
   pause: () => Promise<void>;
   seek: (positionMs: number) => Promise<void>;

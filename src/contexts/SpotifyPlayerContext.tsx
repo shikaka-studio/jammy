@@ -12,49 +12,37 @@ interface SpotifyPlayerProviderProps {
   children: ReactNode;
   onPlayerReady?: (deviceId: string) => void;
   onPlayerStateChange?: (state: Spotify.PlaybackState | null) => void;
-  onPlayerError?: (error: Error) => void;
 }
 
 export const SpotifyPlayerProvider = ({
   children,
   onPlayerReady,
   onPlayerStateChange,
-  onPlayerError,
 }: SpotifyPlayerProviderProps) => {
-  const { spotifyToken, setSpotifyToken } = useAuthStore();
-
   const [isReady, setIsReady] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const playerRef = useRef<SpotifyPlayer | null>(null);
+  const { spotifyToken, setSpotifyToken } = useAuthStore();
 
   // Get OAuth token
   // Note: Uses getState() instead of spotifyToken from hook to avoid stale closure
   // The Spotify SDK stores this callback and may call it much later
-  const getOAuthToken = useCallback(
-    (callback: (token: string) => void) => {
-      // Get current token from store (not stale closure value)
-      const currentToken = useAuthStore.getState().spotifyToken;
+  const getOAuthToken = useCallback((callback: (token: string) => void) => {
+    // Get current token from store (not stale closure value)
+    const currentToken = useAuthStore.getState().spotifyToken;
 
-      if (currentToken) {
-        callback(currentToken);
-        return;
-      }
+    if (currentToken) {
+      callback(currentToken);
+      return;
+    }
 
-      // If no token exists, something went wrong
-      console.error('No Spotify token available');
-      setError('No Spotify token available');
-      onPlayerError?.(new Error('No Spotify token available'));
-    },
-    [onPlayerError]
-  );
+    // If no token exists, something went wrong
+    console.error('No Spotify token available');
+  }, []);
 
   // Initialize player
   useEffect(() => {
-    if (!spotifyToken) return;
-
     let isMounted = true;
 
     const initPlayer = async () => {
@@ -74,13 +62,10 @@ export const SpotifyPlayerProvider = ({
         // Error handlers
         player.addListener('initialization_error', ({ message }) => {
           console.error('Initialization error:', message);
-          setError(`Initialization error: ${message}`);
-          onPlayerError?.(new Error(message));
         });
 
         player.addListener('authentication_error', async ({ message }) => {
           console.error('Authentication error:', message);
-          setError(`Authentication error: ${message}. Refreshing token...`);
 
           try {
             // Refresh the token
@@ -101,24 +86,17 @@ export const SpotifyPlayerProvider = ({
             }
 
             console.log('Player reconnected successfully with new token');
-            setError(null);
           } catch (err) {
             console.error('Failed to recover from authentication error:', err);
-            setError('Authentication failed. Please refresh the page.');
-            onPlayerError?.(new Error('Authentication recovery failed'));
           }
         });
 
         player.addListener('account_error', ({ message }) => {
           console.error('Account error:', message);
-          setError(`Account error: ${message}. Spotify Premium required.`);
-          onPlayerError?.(new Error(message));
         });
 
         player.addListener('playback_error', ({ message }) => {
           console.error('Playback error:', message);
-          setError(`Playback error: ${message}`);
-          onPlayerError?.(new Error(message));
         });
 
         // Ready handler
@@ -127,7 +105,6 @@ export const SpotifyPlayerProvider = ({
           console.log('Spotify player ready with device ID:', device_id);
           setDeviceId(device_id);
           setIsReady(true);
-          setError(null);
           onPlayerReady?.(device_id);
         });
 
@@ -149,7 +126,6 @@ export const SpotifyPlayerProvider = ({
 
         if (!success) {
           console.error('Failed to connect Spotify player');
-          setError('Failed to connect to Spotify');
           return;
         }
 
@@ -157,8 +133,6 @@ export const SpotifyPlayerProvider = ({
         playerRef.current = player;
       } catch (err) {
         console.error('Error initializing Spotify player:', err);
-        setError('Failed to initialize Spotify player');
-        onPlayerError?.(err instanceof Error ? err : new Error('Unknown error'));
       }
     };
 
@@ -172,7 +146,7 @@ export const SpotifyPlayerProvider = ({
         playerRef.current = null;
       }
     };
-  }, [spotifyToken, getOAuthToken, onPlayerReady, onPlayerStateChange, onPlayerError]);
+  }, [spotifyToken, getOAuthToken, onPlayerReady, onPlayerStateChange]);
 
   // Play a track
   const play = useCallback(
@@ -186,7 +160,6 @@ export const SpotifyPlayerProvider = ({
         await spotifyService.play(deviceId, spotifyUri, positionMs);
       } catch (err) {
         console.error('Error playing track:', err);
-        setError('Failed to play track');
       }
     },
     [deviceId]
@@ -200,7 +173,6 @@ export const SpotifyPlayerProvider = ({
       await spotifyService.pause(deviceId);
     } catch (err) {
       console.error('Error pausing playback:', err);
-      setError('Failed to pause playback');
     }
   }, [deviceId]);
 
@@ -213,7 +185,6 @@ export const SpotifyPlayerProvider = ({
         await spotifyService.seek(deviceId, positionMs);
       } catch (err) {
         console.error('Error seeking:', err);
-        setError('Failed to seek');
       }
     },
     [deviceId]
@@ -227,7 +198,6 @@ export const SpotifyPlayerProvider = ({
       await playerRef.current.setVolume(volume);
     } catch (err) {
       console.error('Error setting volume:', err);
-      setError('Failed to set volume');
     }
   }, []);
 
@@ -235,7 +205,6 @@ export const SpotifyPlayerProvider = ({
     isReady,
     deviceId,
     isPaused,
-    error,
     play,
     pause,
     seek,

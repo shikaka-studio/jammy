@@ -28,10 +28,6 @@ interface SpotifySearchResponse {
 const fetchWithTokenRefresh = async (url: string, options: RequestInit = {}): Promise<Response> => {
   let token = getSpotifyToken();
 
-  if (!token) {
-    throw new Error('No Spotify token available');
-  }
-
   // Make initial request
   let response = await fetch(url, {
     ...options,

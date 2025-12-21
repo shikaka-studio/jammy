@@ -7,8 +7,18 @@ interface UseRoomWebSocketOptions {
   userId: string;
   onPlaybackUpdate?: (state: PlaybackState) => void;
   onQueueUpdate?: (queue: QueueSongWS[], recentlyPlayed: QueueSongWS[]) => void;
-  onMemberJoined?: (userId: string, displayName: string, profileImageUrl: string, connectionCount: number) => void;
-  onMemberLeft?: (userId: string, displayName: string, profileImageUrl: string, connectionCount: number) => void;
+  onMemberJoined?: (
+    userId: string,
+    displayName: string,
+    profileImageUrl: string,
+    connectionCount: number
+  ) => void;
+  onMemberLeft?: (
+    userId: string,
+    displayName: string,
+    profileImageUrl: string,
+    connectionCount: number
+  ) => void;
   onNotification?: (notification: Notification) => void;
 }
 
@@ -24,7 +34,6 @@ export const useRoomWebSocket = ({
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [connectionError, setConnectionError] = useState<string | null>(null);
 
   // Store callbacks in refs to avoid reconnections when they change
   const callbacksRef = useRef({
@@ -50,7 +59,10 @@ export const useRoomWebSocket = ({
     if (!roomCode || !userId) return;
 
     // Prevent creating multiple connections
-    if (wsRef.current?.readyState === WebSocket.OPEN || wsRef.current?.readyState === WebSocket.CONNECTING) {
+    if (
+      wsRef.current?.readyState === WebSocket.OPEN ||
+      wsRef.current?.readyState === WebSocket.CONNECTING
+    ) {
       console.log('WebSocket already connected or connecting');
       return;
     }
@@ -68,7 +80,6 @@ export const useRoomWebSocket = ({
       ws.onopen = () => {
         console.log('WebSocket connected');
         setIsConnected(true);
-        setConnectionError(null);
       };
 
       ws.onmessage = (event) => {
@@ -80,7 +91,10 @@ export const useRoomWebSocket = ({
               callbacksRef.current.onPlaybackUpdate?.(message.data);
               break;
             case 'queue_update':
-              callbacksRef.current.onQueueUpdate?.(message.data.queue, message.data.recently_played);
+              callbacksRef.current.onQueueUpdate?.(
+                message.data.queue,
+                message.data.recently_played
+              );
               break;
             case 'member_joined':
               callbacksRef.current.onMemberJoined?.(
@@ -111,7 +125,6 @@ export const useRoomWebSocket = ({
 
       ws.onerror = (error) => {
         console.error('WebSocket error:', error);
-        setConnectionError('WebSocket connection error');
       };
 
       ws.onclose = () => {
@@ -128,7 +141,6 @@ export const useRoomWebSocket = ({
       wsRef.current = ws;
     } catch (error) {
       console.error('Error creating WebSocket:', error);
-      setConnectionError('Failed to create WebSocket connection');
     }
   }, [roomCode, userId]);
 
@@ -155,7 +167,6 @@ export const useRoomWebSocket = ({
 
   return {
     isConnected,
-    connectionError,
     disconnect,
     reconnect: connect,
   };

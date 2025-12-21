@@ -6,7 +6,6 @@ import type { SearchResult } from '@/types/room';
 interface UseSongSearchOptions {
   roomCode: string | undefined;
   userSpotifyId: string | undefined;
-  onError?: (error: string | null) => void;
 }
 
 interface UseSongSearchReturn {
@@ -16,42 +15,32 @@ interface UseSongSearchReturn {
   handleAddSong: (song: SearchResult) => Promise<void>;
 }
 
-const useSongSearch = ({
-  roomCode,
-  userSpotifyId,
-  onError,
-}: UseSongSearchOptions): UseSongSearchReturn => {
+const useSongSearch = ({ roomCode, userSpotifyId }: UseSongSearchOptions): UseSongSearchReturn => {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearch = useCallback(
-    async (query: string) => {
-      if (query.length === 0) {
-        setSearchResults([]);
-        return;
-      }
+  const handleSearch = useCallback(async (query: string) => {
+    if (query.length === 0) {
+      setSearchResults([]);
+      return;
+    }
 
-      try {
-        setIsSearching(true);
-        onError?.(null);
-        const results = await spotifyService.searchTracks(query);
-        setSearchResults(results);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Error searching songs';
-        onError?.(errorMessage);
-        console.error('Error searching songs:', err);
-        setSearchResults([]);
-      } finally {
-        setIsSearching(false);
-      }
-    },
-    [onError]
-  );
+    try {
+      setIsSearching(true);
+      const results = await spotifyService.searchTracks(query);
+      setSearchResults(results);
+    } catch (err) {
+      console.error('Error searching songs:', err);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
 
   const handleAddSong = useCallback(
     async (song: SearchResult) => {
       if (!roomCode || !userSpotifyId) {
-        onError?.('Cannot add song: missing room or user information');
+        console.error('Cannot add song: missing room or user information');
         return;
       }
 
@@ -71,12 +60,10 @@ const useSongSearch = ({
         });
         // Queue will be updated via WebSocket
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Error adding song to queue';
-        onError?.(errorMessage);
         console.error('Error adding song:', err);
       }
     },
-    [roomCode, userSpotifyId, onError]
+    [roomCode, userSpotifyId]
   );
 
   return {

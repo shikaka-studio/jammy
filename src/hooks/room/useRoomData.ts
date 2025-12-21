@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router';
+import { useToast } from '@/hooks/useToast';
 import { roomsService } from '@/services/rooms';
 import { checkIsHost } from '@/utils/room';
 import { ROUTES } from '@/constants/routes';
@@ -15,19 +16,21 @@ interface UseRoomDataReturn {
   room: Room | null;
   isLoading: boolean;
   isJoining: boolean;
-  error: string | null;
   isHost: boolean;
   leaveRoom: () => Promise<void>;
   closeRoom: () => Promise<void>;
-  setError: (error: string | null) => void;
 }
 
-const useRoomData = ({ roomCode, userId, userSpotifyId }: UseRoomDataOptions): UseRoomDataReturn => {
+const useRoomData = ({
+  roomCode,
+  userId,
+  userSpotifyId,
+}: UseRoomDataOptions): UseRoomDataReturn => {
   const navigate = useNavigate();
   const [room, setRoom] = useState<Room | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { addToast } = useToast();
 
   const isHost = checkIsHost(room, { id: userId, spotify_id: userSpotifyId } as any);
 
@@ -38,7 +41,6 @@ const useRoomData = ({ roomCode, userId, userSpotifyId }: UseRoomDataOptions): U
 
       try {
         setIsLoading(true);
-        setError(null);
         const roomData = await roomsService.getRoomDetails(roomCode);
         setRoom(roomData);
 
@@ -52,14 +54,17 @@ const useRoomData = ({ roomCode, userId, userSpotifyId }: UseRoomDataOptions): U
             const updatedRoom = await roomsService.joinRoom(roomCode, userSpotifyId);
             setRoom(updatedRoom);
           } catch (joinErr) {
-            setError(joinErr instanceof Error ? joinErr.message : 'Error joining the room');
+            addToast(
+              joinErr instanceof Error ? joinErr.message : 'Error joining the room',
+              'error'
+            );
             console.error('Error joining room:', joinErr);
           } finally {
             setIsJoining(false);
           }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error loading room');
+        addToast(err instanceof Error ? err.message : 'Error loading room', 'error');
         console.error('Error loading room:', err);
       } finally {
         setIsLoading(false);
@@ -67,7 +72,7 @@ const useRoomData = ({ roomCode, userId, userSpotifyId }: UseRoomDataOptions): U
     };
 
     if (!userId) {
-      setError('You must log in to access a room');
+      addToast('You must log in to access a room', 'error');
       setIsLoading(false);
       return;
     }
@@ -79,7 +84,7 @@ const useRoomData = ({ roomCode, userId, userSpotifyId }: UseRoomDataOptions): U
 
   const leaveRoom = useCallback(async () => {
     if (!userSpotifyId) {
-      setError('You must log in to leave the room');
+      addToast('You must log in to leave the room', 'error');
       return;
     }
 
@@ -92,21 +97,21 @@ const useRoomData = ({ roomCode, userId, userSpotifyId }: UseRoomDataOptions): U
       await roomsService.leaveRoom(roomCode, userSpotifyId);
       navigate(ROUTES.ROOMS);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error leaving room');
+      addToast(err instanceof Error ? err.message : 'Error leaving room', 'error');
       console.error('Error leaving room:', err);
     }
   }, [roomCode, userSpotifyId, navigate]);
 
   const closeRoom = useCallback(async () => {
     if (!userSpotifyId) {
-      setError('You must log in to close the room');
+      addToast('You must log in to close the room', 'error');
       return;
     }
 
     if (!roomCode || !room) return;
 
     if (!isHost) {
-      setError('Only the host can close the room');
+      addToast('Only the host can close the room', 'error');
       return;
     }
 
@@ -119,7 +124,7 @@ const useRoomData = ({ roomCode, userId, userSpotifyId }: UseRoomDataOptions): U
       await roomsService.closeRoom(roomCode, userSpotifyId);
       navigate(ROUTES.ROOMS);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error closing room');
+      addToast(err instanceof Error ? err.message : 'Error closing room', 'error');
       console.error('Error closing room:', err);
     }
   }, [roomCode, userSpotifyId, room, isHost, navigate]);
@@ -128,11 +133,9 @@ const useRoomData = ({ roomCode, userId, userSpotifyId }: UseRoomDataOptions): U
     room,
     isLoading,
     isJoining,
-    error,
     isHost,
     leaveRoom,
     closeRoom,
-    setError,
   };
 };
 

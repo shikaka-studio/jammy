@@ -5,24 +5,26 @@ import SongSearch from '@/components/room/SongSearch';
 import SongPlayer from '@/components/room/SongPlayer';
 import SongQueueTabs from '@/components/room/SongQueueTabs';
 import RoomHeader from '@/components/room/RoomHeader';
-import RoomStatusBars from '@/components/room/RoomStatusBars';
 import { useAuthStore } from '@/stores/auth';
 import { useRoomWebSocket } from '@/hooks/room/useRoomWebSocket';
 import { useSpotifyPlayer } from '@/hooks/room/useSpotifyPlayer';
+import { useToast } from '@/hooks/useToast';
 import useRoomData from '@/hooks/room/useRoomData';
 import usePlaybackSync from '@/hooks/room/usePlaybackSync';
 import useSongSearch from '@/hooks/room/useSongSearch';
-import useNotifications from '@/hooks/room/useNotifications';
 import type { QueueSong, ChatMessage, HistorySong } from '@/types/room';
-import type { QueueSongWS } from '@/types/websocket';
+import type { QueueSongWS, Notification } from '@/types/websocket';
 import { MOCK_CHAT_MESSAGES } from '@/constants/mockData';
 
 const RoomContent = () => {
+  const [queue, setQueue] = useState<QueueSong[]>([]);
+  const [recentSongs, setRecentSongs] = useState<HistorySong[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(MOCK_CHAT_MESSAGES);
   const { id: roomCode } = useParams<{ id: string }>();
   const { user } = useAuthStore();
   const spotifyPlayer = useSpotifyPlayer();
+  const { addToast } = useToast();
 
-  // Custom hooks - clean, single-line declarations
   const roomData = useRoomData({
     roomCode,
     userId: user?.id,
@@ -32,21 +34,20 @@ const RoomContent = () => {
   const playback = usePlaybackSync({
     roomCode,
     spotifyPlayer,
-    onError: roomData.setError,
   });
 
   const search = useSongSearch({
     roomCode,
     userSpotifyId: user?.spotify_id,
-    onError: roomData.setError,
   });
 
-  const notifications = useNotifications();
-
-  // Queue and chat state (managed via WebSocket)
-  const [queue, setQueue] = useState<QueueSong[]>([]);
-  const [recentSongs, setRecentSongs] = useState<HistorySong[]>([]);
-  const [messages, setMessages] = useState<ChatMessage[]>(MOCK_CHAT_MESSAGES);
+  // WebSocket notification handler
+  const handleNotification = useCallback(
+    (notification: Notification) => {
+      addToast(notification.message, notification.level);
+    },
+    [addToast]
+  );
 
   // WebSocket handlers
   const handleQueueUpdate = useCallback(
@@ -72,14 +73,14 @@ const RoomContent = () => {
   );
 
   const handleMemberJoined = useCallback(
-    (userId: string, displayName: string, profileImageUrl: string, connectionCount: number) => {
+    (_userId: string, displayName: string, _profileImageUrl: string, connectionCount: number) => {
       console.log(`${displayName} joined the room (${connectionCount} connections)`);
     },
     []
   );
 
   const handleMemberLeft = useCallback(
-    (userId: string, displayName: string, profileImageUrl: string, connectionCount: number) => {
+    (_userId: string, displayName: string, _profileImageUrl: string, connectionCount: number) => {
       console.log(`${displayName} left the room (${connectionCount} connections)`);
     },
     []
@@ -104,7 +105,7 @@ const RoomContent = () => {
     onQueueUpdate: handleQueueUpdate,
     onMemberJoined: handleMemberJoined,
     onMemberLeft: handleMemberLeft,
-    onNotification: notifications.showNotification,
+    onNotification: handleNotification,
   });
 
   // Loading states
@@ -113,22 +114,6 @@ const RoomContent = () => {
       <BaseLayout>
         <div className='flex h-[calc(100dvh-61px)] items-center justify-center'>
           <div className='text-text-secondary'>Loading room...</div>
-        </div>
-      </BaseLayout>
-    );
-  }
-
-  if (roomData.error && !roomData.room) {
-    return (
-      <BaseLayout>
-        <div className='flex h-[calc(100dvh-61px)] flex-col items-center justify-center gap-4'>
-          <div className='text-red-500'>{roomData.error}</div>
-          <button
-            onClick={() => window.history.back()}
-            className='bg-primary hover:bg-primary/90 rounded-xl px-6 py-2 text-gray-900 transition'
-          >
-            Back to rooms
-          </button>
         </div>
       </BaseLayout>
     );
@@ -154,13 +139,6 @@ const RoomContent = () => {
           isHost={roomData.isHost}
           onLeaveRoom={roomData.leaveRoom}
           onCloseRoom={roomData.closeRoom}
-        />
-
-        <RoomStatusBars
-          error={roomData.error}
-          notification={notifications.notification}
-          spotifyPlayerReady={spotifyPlayer.isReady}
-          spotifyPlayerError={spotifyPlayer.error}
         />
 
         <div className='flex min-h-0 w-full flex-1 flex-col gap-4 lg:flex-row'>

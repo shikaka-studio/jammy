@@ -8,7 +8,6 @@ import type { SpotifyPlayerContextValue } from '@/types/spotifyPlayer';
 interface UsePlaybackSyncOptions {
   roomCode: string | undefined;
   spotifyPlayer: SpotifyPlayerContextValue;
-  onError?: (error: string | null) => void;
 }
 
 interface UsePlaybackSyncReturn {
@@ -22,13 +21,12 @@ interface UsePlaybackSyncReturn {
 const usePlaybackSync = ({
   roomCode,
   spotifyPlayer,
-  onError,
 }: UsePlaybackSyncOptions): UsePlaybackSyncReturn => {
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
   const [playerState, setPlayerState] = useState<PlayerState>({
     currentTime: 0,
     isPlaying: false,
-    volume: 0.8,
+    volume: 1.0,
   });
   const [playbackStartedAt, setPlaybackStartedAt] = useState<string | null>(null);
   const [basePositionMs, setBasePositionMs] = useState(0);
