@@ -152,7 +152,7 @@ const SongQueueTabs = ({
         </div>
 
         {/* Content */}
-        <div className='flex-1 space-y-2 overflow-y-auto'>{renderContent()}</div>
+        <div className='flex-1 space-y-2 overflow-y-auto min-h-0'>{renderContent()}</div>
       </div>
 
       <SessionHistoryModal

@@ -344,7 +344,7 @@ const Room = () => {
 
   return (
     <BaseLayout>
-      <div className='flex h-[calc(100dvh-61px)] flex-col gap-4 p-6'>
+      <div className='flex h-[calc(100dvh-61px)] flex-col gap-4 overflow-hidden p-6'>
         {/* Room header with controls */}
         <div className='flex items-center justify-between'>
           <div>
@@ -390,7 +390,7 @@ const Room = () => {
           </div>
         )}
 
-        <div className='flex h-full w-full flex-col gap-4 lg:flex-row'>
+        <div className='flex min-h-0 flex-1 w-full flex-col gap-4 lg:flex-row'>
           {/* Left column: Search and Player */}
           <div className='flex flex-1 flex-col gap-4' style={{ flex: '3' }}>
             {/* Search bar at top */}
@@ -413,7 +413,7 @@ const Room = () => {
           </div>
 
           {/* Right column: Song queue */}
-          <div className='flex'>
+          <div className='flex h-full'>
             <SongQueueTabs
               queue={queue}
               recentSongs={recentSongs}
