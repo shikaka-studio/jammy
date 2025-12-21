@@ -30,12 +30,12 @@ export const SpotifyPlayerProvider = ({
 
   const playerRef = useRef<SpotifyPlayer | null>(null);
 
-  // Get OAuth token with automatic refresh
+  // Get OAuth token
   // Note: Uses getState() instead of spotifyToken from hook to avoid stale closure
   // The Spotify SDK stores this callback and may call it much later
   const getOAuthToken = useCallback(
     (callback: (token: string) => void) => {
-      // Always get fresh token from store, not stale closure value
+      // Get current token from store (not stale closure value)
       const currentToken = useAuthStore.getState().spotifyToken;
 
       if (currentToken) {
@@ -43,20 +43,12 @@ export const SpotifyPlayerProvider = ({
         return;
       }
 
-      // If no token, try to refresh
-      authService
-        .refreshSpotifyToken()
-        .then((newToken) => {
-          setSpotifyToken(newToken);
-          callback(newToken);
-        })
-        .catch((err) => {
-          console.error('Failed to refresh Spotify token:', err);
-          setError('Failed to authenticate with Spotify');
-          onPlayerError?.(new Error('Token refresh failed'));
-        });
+      // If no token exists, something went wrong
+      console.error('No Spotify token available');
+      setError('No Spotify token available');
+      onPlayerError?.(new Error('No Spotify token available'));
     },
-    [setSpotifyToken, onPlayerError]
+    [onPlayerError]
   );
 
   // Initialize player
@@ -86,10 +78,35 @@ export const SpotifyPlayerProvider = ({
           onPlayerError?.(new Error(message));
         });
 
-        player.addListener('authentication_error', ({ message }) => {
+        player.addListener('authentication_error', async ({ message }) => {
           console.error('Authentication error:', message);
-          setError(`Authentication error: ${message}`);
-          onPlayerError?.(new Error(message));
+          setError(`Authentication error: ${message}. Refreshing token...`);
+
+          try {
+            // Refresh the token
+            const newToken = await authService.refreshSpotifyToken();
+            console.log('Token refreshed successfully, reconnecting player...');
+            setSpotifyToken(newToken);
+
+            // Disconnect and reconnect with new token
+            if (!playerRef.current) {
+              throw new Error('Player not available');
+            }
+
+            playerRef.current.disconnect();
+            const success = await playerRef.current.connect();
+
+            if (!success) {
+              throw new Error('Failed to reconnect player');
+            }
+
+            console.log('Player reconnected successfully with new token');
+            setError(null);
+          } catch (err) {
+            console.error('Failed to recover from authentication error:', err);
+            setError('Authentication failed. Please refresh the page.');
+            onPlayerError?.(new Error('Authentication recovery failed'));
+          }
         });
 
         player.addListener('account_error', ({ message }) => {
