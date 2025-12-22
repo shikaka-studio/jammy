@@ -19,6 +19,7 @@ interface AuthState {
   error: string | null;
   setUser: (user: User) => void;
   setToken: (token: string) => void;
+  setSpotifyToken: (spotifyToken: string) => void;
   logout: () => void;
   checkAuth: () => void;
   setLoading: (isLoading: boolean) => void;
@@ -47,6 +48,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   setToken: (token: string) => {
     setToken(token);
     set({ token, isAuthenticated: true });
+  },
+
+  setSpotifyToken: (spotifyToken: string) => {
+    setSpotifyToken(spotifyToken);
+    set({ spotifyToken });
   },
 
   logout: () => {

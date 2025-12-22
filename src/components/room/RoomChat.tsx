@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { ChatMessage } from '@/types/room';
 import { CHAT_TEXTS } from '@/constants/room';
+import { formatMessageTime } from '@/utils/format';
 
 interface RoomChatProps {
     messages: ChatMessage[];
@@ -22,16 +23,6 @@ const SendIcon = () => (
         <polygon points="22 2 15 22 11 13 2 9 22 2" />
     </svg>
 );
-
-/**
- * Formats the time of a message to display in the chat
- */
-const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
 
 const RoomChat = ({ messages, onSendMessage }: RoomChatProps) => {
     const [inputValue, setInputValue] = useState('');
@@ -100,7 +91,7 @@ const RoomChat = ({ messages, onSendMessage }: RoomChatProps) => {
                                 {msg.userName}
                             </span>
                             <span className="text-xs text-text-secondary opacity-0 transition group-hover:opacity-100">
-                                {formatTime(msg.timestamp)}
+                                {formatMessageTime(msg.timestamp)}
                             </span>
                         </div>
                         <p className="mt-0.5 text-sm text-text-primary">{msg.message}</p>

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, RefObject } from 'react';
+import { useToast } from '@/hooks/useToast';
 import BaseLayout from '@/components/layout/BaseLayout';
 import Container from '@/ui/Container';
 import RoomsHeader from '@/components/rooms/RoomsHeader';
@@ -50,9 +51,9 @@ const Rooms = () => {
   const [activeFilter, setActiveFilter] = useState<RoomFilter>({ type: 'all' });
   const [rooms, setRooms] = useState<Room[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { modalRef, isOpen, openModal, closeModal } = useModal();
   const { user } = useAuthStore();
+  const { addToast } = useToast();
 
   useEffect(() => {
     loadRooms();
@@ -61,12 +62,10 @@ const Rooms = () => {
   const loadRooms = async () => {
     try {
       setIsLoading(true);
-      setError(null);
       const data = await roomsService.getRooms();
-      console.log(data);
       setRooms(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error loading rooms');
+      addToast(err instanceof Error ? err.message : 'Error loading rooms', 'error');
       console.error('Error loading rooms:', err);
     } finally {
       setIsLoading(false);
@@ -79,24 +78,24 @@ const Rooms = () => {
 
   const handleCreateRoom = async (data: CreateRoomFormData) => {
     if (!user?.spotify_id) {
-      setError('You must log in to create a room');
+      addToast('You must log in to create a room', 'error');
       return;
     }
 
     try {
-      setError(null);
-      const newRoom = await roomsService.createRoom(data.name, user.spotify_id);
+      const newRoom = await roomsService.createRoom(data, user.spotify_id);
       setRooms((prev) => [newRoom, ...prev]);
       closeModal();
+      addToast('Room created successfully!', 'success');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creating room');
+      addToast(err instanceof Error ? err.message : 'Error creating room', 'error');
       console.error('Error creating room:', err);
     }
   };
 
   const handleCreateRoomClick = () => {
     if (!user) {
-      setError('You must log in to create a room');
+      addToast('You must log in to create a room', 'error');
       return;
     }
     openModal();
@@ -113,12 +112,6 @@ const Rooms = () => {
             availableTags={availableTags}
             onFilterChange={setActiveFilter}
           />
-
-          {error && (
-            <div className='rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-500'>
-              {error}
-            </div>
-          )}
 
           {isLoading ? (
             <div className='flex items-center justify-center py-20'>
@@ -139,12 +132,9 @@ const Rooms = () => {
       <CreateRoomModal
         modalRef={modalRef as RefObject<HTMLDivElement>}
         isOpen={isOpen}
-        onClose={() => {
-          closeModal();
-          setError(null);
-        }}
-        onSubmit={handleCreateRoom}
         availableTags={availableTags}
+        onClose={closeModal}
+        onSubmit={handleCreateRoom}
       />
     </BaseLayout>
   );

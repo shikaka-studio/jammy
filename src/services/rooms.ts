@@ -6,6 +6,8 @@ import type {
   JoinRoomRequest,
   LeaveRoomParams,
   CloseRoomParams,
+  CreateRoomFormData,
+  UploadImageResponse,
 } from '@/types/room';
 
 export const roomsService = {
@@ -19,12 +21,41 @@ export const roomsService = {
     }
   },
 
-  async createRoom(name: string, hostSpotifyId: string): Promise<Room> {
+  async uploadCoverImage(file: File): Promise<string> {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await apiClient.post<UploadImageResponse>(
+        API_ENDPOINTS.ROOMS.UPLOAD_COVER,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      return response.data.url;
+    } catch (error: any) {
+      console.error('Failed to upload cover image:', error);
+
+      // Extract error message from API response
+      const errorMessage = error?.response?.data?.detail || 'Could not upload cover image';
+      throw new Error(errorMessage);
+    }
+  },
+
+  async createRoom(formData: CreateRoomFormData, hostSpotifyId: string): Promise<Room> {
     try {
       const payload: CreateRoomRequest = {
-        name,
+        name: formData.name,
         host_spotify_id: hostSpotifyId,
+        description: formData.description,
+        cover_image_url: formData.coverImageUrl,
+        tags: formData.tags,
       };
+
       const response = await apiClient.post<Room>(API_ENDPOINTS.ROOMS.CREATE, payload);
       return response.data;
     } catch (error) {
@@ -33,10 +64,10 @@ export const roomsService = {
     }
   },
 
-  async joinRoom(roomCode: string, userSpotifyId: string): Promise<Room> {
+  async joinRoom(code: string, userSpotifyId: string): Promise<Room> {
     try {
       const payload: JoinRoomRequest = {
-        room_code: roomCode,
+        code,
         user_spotify_id: userSpotifyId,
       };
       const response = await apiClient.post<Room>(API_ENDPOINTS.ROOMS.JOIN, payload);

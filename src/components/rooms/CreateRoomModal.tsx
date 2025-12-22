@@ -8,6 +8,7 @@ import TagsInput from '@/ui/TagsInput';
 import type { CreateRoomFormData } from '@/types/room';
 import { CREATE_ROOM_MODAL } from '@/constants/room';
 import CreateRoomField from './CreateRoomField';
+import { roomsService } from '@/services/rooms';
 
 interface CreateRoomModalProps {
   modalRef: RefObject<HTMLDivElement>;
@@ -21,7 +22,7 @@ const INITIAL_FORM_DATA: CreateRoomFormData = {
   name: '',
   tags: [],
   description: '',
-  coverImage: null,
+  coverImageUrl: '',
 };
 
 const CreateRoomModal = ({
@@ -33,10 +34,13 @@ const CreateRoomModal = ({
 }: CreateRoomModalProps) => {
   const [formData, setFormData] = useState<CreateRoomFormData>(INITIAL_FORM_DATA);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleClose = () => {
     setFormData(INITIAL_FORM_DATA);
     setImagePreview(null);
+    setUploadError(null);
     onClose();
   };
 
@@ -49,17 +53,32 @@ const CreateRoomModal = ({
     setFormData((prev) => ({ ...prev, tags }));
   };
 
-  const handleFileChange = (file: File | null, preview: string | null) => {
-    setFormData((prev) => ({ ...prev, coverImage: file }));
+  const handleFileChange = async (file: File | null, preview: string | null) => {
     setImagePreview(preview);
+    setUploadError(null);
+
+    if (!file) {
+      setFormData((prev) => ({ ...prev, coverImageUrl: '' }));
+      return;
+    }
+
+    try {
+      setIsUploadingImage(true);
+      const url = await roomsService.uploadCoverImage(file);
+      setFormData((prev) => ({ ...prev, coverImageUrl: url }));
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : 'Failed to upload image');
+      setImagePreview(null);
+      setFormData((prev) => ({ ...prev, coverImageUrl: '' }));
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) return;
 
-    // Only send name, backend only needs name and host_spotify_id
-    // Other fields (tags, description, coverImage) can be used in the future
     onSubmit(formData);
     handleClose();
   };
@@ -114,14 +133,21 @@ const CreateRoomModal = ({
             <CreateRoomField name='cover' label={CREATE_ROOM_MODAL.COVER_LABEL}>
               <FileUpload
                 id='cover'
-                value={formData.coverImage}
+                value={null}
                 preview={imagePreview}
                 onChange={handleFileChange}
                 accept='image/*'
                 aspectRatio='video'
                 placeholder={CREATE_ROOM_MODAL.COVER_HINT}
                 changeText={CREATE_ROOM_MODAL.COVER_CHANGE}
+                disabled={isUploadingImage}
               />
+              {isUploadingImage && (
+                <p className='mt-2 text-sm text-text-secondary'>Uploading image...</p>
+              )}
+              {uploadError && (
+                <p className='mt-2 text-sm text-red-500'>{uploadError}</p>
+              )}
             </CreateRoomField>
           </div>
         </Modal.Body>
@@ -130,7 +156,7 @@ const CreateRoomModal = ({
           <Button variant='secondary' full onClick={handleClose}>
             {CREATE_ROOM_MODAL.CANCEL_BUTTON}
           </Button>
-          <Button type='submit' full>
+          <Button type='submit' full disabled={isUploadingImage}>
             {CREATE_ROOM_MODAL.SUBMIT_BUTTON}
           </Button>
         </Modal.Footer>
